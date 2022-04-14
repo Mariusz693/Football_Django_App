@@ -1,0 +1,60 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Football App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="x-ua-compatible">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-dark bg-dark">
+            <img src="{% static 'image/logo.jpg' %}" class="d-block img-thumbnail" width="60" height="60" alt="">
+            <a href="#" class="navbar-brand main-logo">Football App</a>
+            <div class="col d-flex justify-content-end">
+                {% if request.user.is_authenticated %}
+                <div class="dropdown show">
+                    <a href="#" class="navbar-brand dropdown-toggle" id="dropdownMenuLink" data-toggle="dropdown">
+                        Użyt
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <a href="#" class="dropdown-item">Profil</a>
+                        <a href="#" class="dropdown-item">Hasło</a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item">Wyloguj</a>
+                    </div>
+                </div>
+                {% else %}
+                <a href="#" class="navbar-brand">Zaloguj</a>
+                {% endif  %}
+            </div>
+        </nav>
+    </header>
+    <section>
+        <div class="wrapper">
+            <div class="sidebar">
+                <h3>Ligi piłkarskie</h3>
+                <ul>
+                    {% for league in leagues %}
+                    <li><a href="#">{{ league }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="main-content">
+                <!-- //--------------------------- page content -------------------------// -->
+                {% block content %}{% endblock content %}
+                <!-- //--------------------------- page content end ---------------------// -->
+            </div>
+        </div>
+    </section>
+    <footer class="text-center text-white fixed-bottom bg-dark">
+        <div class="text-center p-3">© 2021 Copyright: Mariusz Kuleta</div>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+</body>
+</html>
