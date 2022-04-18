@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="page-title">
+    <h3>Aplikacja piłkarska</h3>
+</div>
+<div class="card text-center">
+    <div class="card-header">
+        <ul class="nav nav-tabs card-header-tabs">
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'index' %}">Strona domowa</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="{% url 'leagues' %}">Wszystkie Ligi</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'teams' %}">Wszystkie Drużyny</a>
+            </li>
+        </ul>
+    </div>
+    <div class="card-body">
+        <table class="table">
+            <thead>
+                <tr class="d-flex">
+                    <th class="col-6">Nazwa</th>
+                    <th class="col-3">Kraj</th>
+                    <th class="col-3 text-center">Liczba drużyn</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for league in object_list %}
+                <tr class="d-flex">
+                    <td class="col-6">
+                        <a href="{% url 'league-table' pk=league.pk %}">{{ league.name }}</a>
+                    </td>
+                    <td class="col-3">{{ league.country.name }}</td>
+                    <td class="col-3 text-center">{{ league.teams_played }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% if request.user.is_authenticated %}
+        <div class="row">
+            <div class="col-12 button">
+                <a href="{% url 'league-create' %}" class="btn btn-dark">Dodaj</a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

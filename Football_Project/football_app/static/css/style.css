@@ -3,7 +3,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-
+    scrollbar-width: none;
 }
 
 body {
@@ -11,7 +11,8 @@ body {
 }
 
 .navbar {
-    padding: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 .main-logo {
@@ -32,22 +33,27 @@ body {
 .wrapper {
     display: flex;
     position: relative;
+    margin-bottom: 55px;
 }
 
 .wrapper .sidebar {
-    position: fixed;
-    width: 200px;
-    height: 100%;
+    width: 225px;
     background-color: #343a40;
-    padding: 30px, 0;
+    margin: 10px;
+    height: 100%;
+    border-radius: 5px;
+}
+
+.wrapper .main-content {
+    width: 100%;
+    margin: 10px;
 }
 
 .wrapper .sidebar h3 {
     color: #fff;
     text-transform: capitalize;
     text-align: center;
-    margin-top: 30px;
-    margin-bottom: 15px;
+    margin-top: 10px;
 }
 
 .wrapper .sidebar ul li {
@@ -70,7 +76,32 @@ body {
     color: #343a40;
 }
 
-.wrapper .main-content {
-    width: 100%;
-    margin-left: 200px;
+div.page-title {
+    margin: 20px;
+}
+
+div.input {
+    padding: 10px;
+    text-align: left;
+    font-weight: bold;
+}
+
+form.button {
+    padding: 10px;
+    text-align: right;
+    text-decoration: #fff;
+}
+
+div.button {
+    padding: 10px;
+    text-align: right;
+    text-decoration: #fff;
+}
+
+table.table {
+    text-align: left;
+}
+
+table.table tbody tr td a {
+    text-decoration: none;
 }

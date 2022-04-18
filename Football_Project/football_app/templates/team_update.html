@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block content %}
+<div class="page-title">
+    <h3>{{ object }}{% if object.actuall_league %}, {{ object.actuall_league }}{% endif %}</h3>
+</div>
+<div class="card text-center">
+    <div class="card-header">
+        <ul class="nav nav-tabs card-header-tabs">
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'team-seasons' pk=object.pk %}">Sezony rozegrane</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Mecze rozegrane</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Mecze do rozegrania</a>
+            </li>
+            {% if request.user.is_authenticated %}
+            <li class="nav-item">
+                <a class="nav-link active" href="{% url 'team-update' pk=object.pk %}">Edytuj drużynę</a>
+            </li>
+            {% endif %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'teams' %}">Wszystkie drużyny</a>
+            </li>
+        </ul>
+    </div>
+    <div class="card-body">
+        <form class="form-control" action="" method="POST">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-lg-6 col-md-9 col-sm-12 input">
+                    {{ form.name|as_crispy_field }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6 col-md-9 col-sm-12 input">
+                    {{ form.country|as_crispy_field }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6 col-md-9 col-sm-12 input">
+                    {{ form.actuall_league|as_crispy_field }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 button">
+                    <input type="submit" class="btn btn-dark" value="Zapisz">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

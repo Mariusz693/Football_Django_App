@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 from pathlib import Path
+from django.urls import reverse_lazy
+
 from .local_settings import *
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -28,6 +30,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+AUTH_USER_MODEL = 'football_app.User'
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+LOGIN_URL = reverse_lazy('login')
 
 # Application definition
 
@@ -39,6 +46,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_extensions',
+    'django_countries',
+    'crispy_forms',
     'football_app',
 ]
 

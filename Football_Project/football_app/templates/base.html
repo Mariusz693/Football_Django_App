@@ -12,23 +12,27 @@
 <body>
     <header>
         <nav class="navbar navbar-dark bg-dark">
-            <img src="{% static 'image/logo.jpg' %}" class="d-block img-thumbnail" width="60" height="60" alt="">
-            <a href="#" class="navbar-brand main-logo">Football App</a>
+            <div>
+                <img src="{% static 'image/logo.jpg' %}" class="d-block img-thumbnail" width="50" height="50" alt="">
+            </div>
+            <div>
+                <a href="{% url 'index' %}" class="navbar-brand main-logo">Football App</a>
+            </div>
             <div class="col d-flex justify-content-end">
                 {% if request.user.is_authenticated %}
                 <div class="dropdown show">
                     <a href="#" class="navbar-brand dropdown-toggle" id="dropdownMenuLink" data-toggle="dropdown">
-                        Użyt
+                        {{ request.user }}
                     </a>
                     <div class="dropdown-menu dropdown-menu-right">
                         <a href="#" class="dropdown-item">Profil</a>
                         <a href="#" class="dropdown-item">Hasło</a>
                         <div class="dropdown-divider"></div>
-                        <a href="#" class="dropdown-item">Wyloguj</a>
+                        <a href="{% url 'logout' %}" class="dropdown-item">Wyloguj</a>
                     </div>
                 </div>
                 {% else %}
-                <a href="#" class="navbar-brand">Zaloguj</a>
+                <a href="{% url 'login' %}" class="navbar-brand">Zaloguj</a>
                 {% endif  %}
             </div>
         </nav>
@@ -36,10 +40,10 @@
     <section>
         <div class="wrapper">
             <div class="sidebar">
-                <h3>Ligi piłkarskie</h3>
+                <h3>Ligi<br>piłkarskie</h3>
                 <ul>
                     {% for league in leagues %}
-                    <li><a href="#">{{ league }}</a></li>
+                    <li><a href="{% url 'league-table' pk=league.pk %}">{{ league }}</a></li>
                     {% endfor %}
                 </ul>
             </div>
