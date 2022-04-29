@@ -1,8 +1,7 @@
 {% extends 'base.html' %}
-{% load static %}
 {% block content %}
 <div class="page-title">
-    <h3>Aplikacja piłkarska</h3>
+    <h3>Ligi</h3>
 </div>
 <div class="card text-center">
     <div class="card-header">
@@ -11,10 +10,10 @@
                 <a class="nav-link" href="{% url 'index' %}">Strona domowa</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link active" href="{% url 'leagues' %}">Wszystkie Ligi</a>
+                <a class="nav-link active" href="{% url 'leagues' %}">Ligi</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'teams' %}">Wszystkie Drużyny</a>
+                <a class="nav-link" href="{% url 'teams' %}">Drużyny</a>
             </li>
         </ul>
     </div>
@@ -28,10 +27,10 @@
                 </tr>
             </thead>
             <tbody>
-                {% for league in object_list %}
+                {% for league in league_list %}
                 <tr class="d-flex">
                     <td class="col-6">
-                        <a href="{% url 'league-table' pk=league.pk %}">{{ league.name }}</a>
+                        <a href="{% url 'league' pk=league.pk %}">{{ league.name }}</a>
                     </td>
                     <td class="col-3">{{ league.country.name }}</td>
                     <td class="col-3 text-center">{{ league.teams_played }}</td>
@@ -41,7 +40,7 @@
         </table>
         {% if request.user.is_authenticated %}
         <div class="row">
-            <div class="col-12 button">
+            <div class="col-12 button-left">
                 <a href="{% url 'league-create' %}" class="btn btn-dark">Dodaj</a>
             </div>
         </div>

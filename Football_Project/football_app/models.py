@@ -1,5 +1,4 @@
 from django.db import models
-from django.core.exceptions import ValidationError, NON_FIELD_ERRORS
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
 from django_countries.fields import CountryField
@@ -12,6 +11,10 @@ from .validators import validate_teams_count
 
 class User(AbstractUser):
 
+    class Meta:
+            verbose_name = _('Użytkownik')
+            verbose_name_plural = _('Użytkownicy')
+
     username = None
     first_name = models.CharField(verbose_name='Imię', max_length=64)
     last_name = models.CharField(verbose_name='Nazwisko', max_length=64)
@@ -21,10 +24,6 @@ class User(AbstractUser):
     REQUIRED_FIELDS = []
 
     objects = CustomUserManager()
-
-    class Meta:
-        verbose_name = _('Użytkownik')
-        verbose_name_plural = _('Użytkownicy')
 
     def __str__(self):
         return self.first_name + " " + self.last_name
@@ -52,19 +51,8 @@ class Team(models.Model):
     actuall_league = models.ForeignKey("League", related_name="teams", on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Aktualna liga")
     actuall_season = models.ForeignKey("Season", related_name="teams", on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Aktualny sezon")
     name = models.CharField(max_length=128, unique=True, verbose_name="Nazwa drużyny")
-    country = CountryField(verbose_name="Kraj rozgrywek", blank_label="Wybierz z listy")
+    country = CountryField(verbose_name="Kraj rozgrywek", blank_label="Wybierz z listy")       
 
-    def clean(self, *args, **kwargs):
-        
-        super().clean(*args, **kwargs)
-    
-        teams_count = self.__class__._default_manager.filter(
-            actuall_league=self.actuall_league,
-        ).count()
-        
-        if teams_count >= self.actuall_league.teams_played:
-            raise ValidationError({"actuall_league": "Liga już ma komplet drużyn"})
-        
     def __str__(self):
         return self.name
 
@@ -74,24 +62,19 @@ class Season(models.Model):
     class Meta:
         verbose_name = "Sezon"
         verbose_name_plural = "Sezony"
+        unique_together = ["league", "season_years"]
+        ordering = ["-date_start"]
 
     league = models.ForeignKey("League", related_name="seasons", on_delete=models.CASCADE, verbose_name="Liga")
     date_start = models.DateField(verbose_name="Data rozpoczęcia")
+    date_end = models.DateField(null=True, verbose_name="Data zakończenia")
     season_years = models.CharField(max_length=9, verbose_name="Sezon")
     season_table = models.ManyToManyField('Team', related_name='seasons', through='SeasonTable')
 
     def save(self, *args, **kwargs):
-
+        
         year = self.date_start.year
         self.season_years = str(year) + "/" + str(year + 1)
-
-        season = self.__class__._default_manager.filter(
-            league=self.league,
-            season_years=self.season_years
-        ).first()
-
-        if season:
-            raise ValidationError({NON_FIELD_ERRORS: "Sezon już ujęty w bazie"})
 
         super().save(*args, **kwargs)
 
@@ -102,9 +85,10 @@ class Season(models.Model):
 class SeasonTable(models.Model):
     
     class Meta:
-        unique_together = ('team', 'season')
         verbose_name = "Tabela ligowa"
         verbose_name_plural = "Tabela ligowa"
+        unique_together = ["team", "season"]
+        ordering = ["points", "goals_balance"]
 
     season = models.ForeignKey("Season", related_name="season_tables", on_delete=models.CASCADE, verbose_name="Sezon")
     team = models.ForeignKey("Team", related_name="season_tables", on_delete=models.CASCADE, verbose_name="Drużyna")
@@ -126,24 +110,13 @@ class Game(models.Model):
     class Meta:
         verbose_name = "Mecz"
         verbose_name_plural = "Mecze"
+        unique_together = ["season", "team_home", "team_away"]
+        ordering = ["match_day"]
     
     season = models.ForeignKey("Season", related_name="games", on_delete=models.CASCADE, verbose_name="Sezon")
     team_home = models.ForeignKey("Team", related_name="games_home", on_delete=models.CASCADE, verbose_name="Drużyna gospodarzy")
     team_away = models.ForeignKey("Team", related_name="games_away", on_delete=models.CASCADE, verbose_name="Drużyna gości")
     team_home_goals = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name="Bramki gospodarzy")
     team_away_goals = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name="Bramki gości")
-    match_day = models.PositiveSmallIntegerField(verbose_name="Kolejka meczowa")
+    match_day = models.PositiveSmallIntegerField(null=True, blank=True, verbose_name="Kolejka meczowa")
     match_day_date = models.DateField(null=True, blank=True, verbose_name="Dzień meczowy")
-
-    def save(self, *args, **kwargs):
-        
-        game = self.__class__._default_manager.filter(
-            team_home=self.team_home,
-            team_away=self.team_away,
-            season=self.season
-        ).first()
-
-        if game:
-            raise ValidationError({NON_FIELD_ERRORS: "Mecz już ujęty w terminarzu"})
-
-        super().save(*args, **kwargs)

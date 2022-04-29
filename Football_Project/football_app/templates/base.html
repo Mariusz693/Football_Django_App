@@ -40,10 +40,15 @@
     <section>
         <div class="wrapper">
             <div class="sidebar">
-                <h3>Ligi<br>piłkarskie</h3>
+                <h3>
+                    <a href="{% url 'leagues' %}">Ligi</a>
+                </h3>
+                <h3>
+                    <a href="{% url 'teams' %}">Drużyny</a>
+                </h3>
                 <ul>
                     {% for league in leagues %}
-                    <li><a href="{% url 'league-table' pk=league.pk %}">{{ league }}</a></li>
+                    <li><a href="{% url 'league' pk=league.pk %}">{{ league }}</a></li>
                     {% endfor %}
                 </ul>
             </div>

@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-title">
+    <div class="row">
+        <div class="col-6 header-left">
+            <h3>{{ season.league }}</h3>
+        </div>
+        <div class="col-6 header-right">
+            <h3>
+                {% if prev %}<a href="{% url 'season-table' pk=prev.pk %}">&laquo;</a>{% endif %}
+                {{ season.season_years }}
+                {% if next %}<a href="{% url 'season-table' pk=next.pk %}">&raquo;</a>{% endif %}
+            </h3>
+        </div>
+    </div>
+</div>
+<div class="card text-center">
+    <div class="card-header">
+        <ul class="nav nav-tabs card-header-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" href="{% url 'season-table' pk=season.pk %}">Tabela</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'season-match' pk=season.pk %}">Kolejki</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'league-info' pk=season.league.pk %}">Liga</a>
+            </li>
+        </ul>
+    </div>
+    <div class="card-body">
+        <h5 class="card-title">Tabela ligowa</h5>
+        <table class="table">
+            <thead>
+                <tr class="d-flex">
+                    <th scope="col" class="col-1">Nr</th>
+                    <th scope="col" class="col-5">Drużyna</th>
+                    <th scope="col" class="col-2">Punkty</th>
+                    <th scope="col" class="col-2">Bilans</th>
+                    <th scope="col" class="col-2">Mecze</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for team in season.season_tables.all %}
+                <tr class="d-flex">
+                    <td class="col-1">{{ forloop.counter }}</td>
+                    <td class="col-5">
+                        <a href="{% url 'team-seasons' pk=team.team.pk %}">{{ team.team }}</a>
+                    </td>
+                    <td class="col-2">{{ team.points }}</td>
+                    <td class="col-2">{{ team.goals_scored }}:{{ team.goals_lost }}</td>
+                    <td class="col-2">{{ team.matches_played }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

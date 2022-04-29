@@ -68,12 +68,10 @@ body {
     text-decoration: none;
 }
 
-.wrapper .sidebar ul li:hover {
-    background-color: #f3f5f9;
-}
-
-.wrapper .sidebar ul li:hover a {
-    color: #343a40;
+.wrapper .sidebar h3 a {
+    color: #fff;
+    display: block;
+    text-decoration: none;
 }
 
 div.page-title {
@@ -86,15 +84,19 @@ div.input {
     font-weight: bold;
 }
 
-form.button {
+div.text {
+    margin-top: 10px;
+}
+
+div.button-right {
     padding: 10px;
     text-align: right;
     text-decoration: #fff;
 }
 
-div.button {
+div.button-left {
     padding: 10px;
-    text-align: right;
+    text-align: left;
     text-decoration: #fff;
 }
 
@@ -104,4 +106,54 @@ table.table {
 
 table.table tbody tr td a {
     text-decoration: none;
+    color: black;
+}
+
+h5.card-title {
+    margin: 10px;
+    text-align: left;
+}
+
+div.list {
+    text-align: left;
+}
+
+span.list-title {
+    font-weight: bold;
+}
+
+a.link {
+    text-decoration: none;
+    margin-left: 15px;
+}
+
+div.link {
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+h5.pagination-header {
+    margin-top: 10px;
+}
+
+div.pagination-row {
+    margin-left: 1px;
+    margin-right: 1px;
+}
+
+div.header-right {
+    text-align: right;
+}
+
+div.header-left {
+    text-align: left;
+}
+
+div.header-right a {
+    text-decoration: none;
+    color: black;
+}
+
+a.page-link {
+    color: black;
 }

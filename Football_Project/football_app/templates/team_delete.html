@@ -1,0 +1,32 @@
+{% extends 'team.html' %}
+{% load crispy_forms_tags %}
+{% block content_team %}
+    <div class="card-body">
+        <h5 class="card-title">Usuń drużynę</h5>
+        <form class="form-control" action="" method="POST">
+            {% csrf_token %}
+            {% if form.non_field_errors %}
+                {% for error in form.non_field_errors %}
+                    <div class="row">
+                        <div class="col-12 text">
+                            <p class="text-danger"><strong>{{ error }}</strong></p>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            <div class="row">
+                <div class="col-12 text">
+                    <h5>Potwierdź usunięcie drużyny: <b>{{ team }}</b></h5>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6 button-left">
+                    <input type="submit" class="btn btn-dark" value="Potwierdź">
+                </div>
+                <div class="col-6 button-right">
+                    <a class="btn btn-success" href="{% url 'team-update' pk=team.pk %}">Anuluj</a>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}

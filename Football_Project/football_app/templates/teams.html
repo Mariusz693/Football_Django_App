@@ -1,8 +1,7 @@
 {% extends 'base.html' %}
-{% load static %}
 {% block content %}
 <div class="page-title">
-    <h3>Aplikacja piłkarska</h3>
+    <h3>Drużyny</h3>
 </div>
 <div class="card text-center">
     <div class="card-header">
@@ -11,10 +10,10 @@
                 <a class="nav-link" href="{% url 'index' %}">Strona domowa</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'leagues' %}">Wszystkie Ligi</a>
+                <a class="nav-link" href="{% url 'leagues' %}">Ligi</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link active" href="{% url 'teams' %}">Wszystkie Drużyny</a>
+                <a class="nav-link active" href="{% url 'teams' %}">Drużyny</a>
             </li>
         </ul>
     </div>
@@ -28,7 +27,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for team in object_list %}
+                {% for team in team_list %}
                 <tr class="d-flex">
                     <td class="col-6">
                         <a href="{% url 'team-seasons' pk=team.pk %}">{{ team.name }}</a>
@@ -47,7 +46,7 @@
         </table>
         {% if request.user.is_authenticated %}
         <div class="row">
-            <div class="col-12 button">
+            <div class="col-12 button-left">
                 <a href="{% url 'team-create' %}" class="btn btn-dark">Dodaj</a>
             </div>
         </div>

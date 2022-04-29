@@ -2,20 +2,24 @@
 {% load crispy_forms_tags %}
 {% block content %}
 <div class="page-title">
-    <h3>Dodaj Ligę</h3>
+    <h3>{{ league }}</h3>
 </div>
 <div class="card text-center">
     <div class="card-header">
         <ul class="nav nav-tabs card-header-tabs">
             <li class="nav-item">
-                <a class="nav-link active" href="{% url 'league-create' %}">Dodaj Lige</a>
+                <a class="nav-link active" href="{% url 'league-update' pk=league.pk %}">Edytuj</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'team-create' %}">Dodaj Drużynę</a>
+                <a class="nav-link" href="{% url 'season-create' pk=league.pk %}">Stwórz sezon</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'league-delete' pk=league.pk %}">Usuń</a>
             </li>
         </ul>
     </div>
     <div class="card-body">
+        <h5 class="card-title">Edytuj ligę</h5>
         <form class="form-control" action="" method="POST">
             {% csrf_token %}
             <div class="row">
@@ -25,20 +29,15 @@
             </div>
             <div class="row">
                 <div class="col-lg-6 col-md-9 col-sm-12 input">
-                    {{ form.country|as_crispy_field }}
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-6 col-md-9 col-sm-12 input">
                     {{ form.teams_played|as_crispy_field }}
                 </div>
             </div>
             <div class="row">
                 <div class="col-6 button-left">
-                    <input type="submit" class="btn btn-dark" value="Dodaj">
+                    <input type="submit" class="btn btn-dark" value="Zapisz">
                 </div>
                 <div class="col-6 button-right">
-                    <a href="{% url 'leagues' %}" class="btn btn-dark">Anuluj</a>
+                    <a href="{% url 'league-info' pk=league.pk %}" class="btn btn-dark">Anuluj</a>
                 </div>
             </div>
         </form>
