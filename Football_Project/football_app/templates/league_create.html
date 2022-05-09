@@ -10,14 +10,20 @@
             <li class="nav-item">
                 <a class="nav-link active" href="{% url 'league-create' %}">Dodaj Lige</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'team-create' %}">Dodaj Drużynę</a>
-            </li>
         </ul>
     </div>
     <div class="card-body">
         <form class="form-control" action="" method="POST">
             {% csrf_token %}
+            {% if form.non_field_errors %}
+                {% for error in form.non_field_errors %}
+                    <div class="row">
+                        <div class="col-12 text">
+                            <p class="text-danger"><strong>{{ error }}</strong></p>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
             <div class="row">
                 <div class="col-lg-6 col-md-9 col-sm-12 input">
                     {{ form.name|as_crispy_field }}
@@ -30,7 +36,7 @@
             </div>
             <div class="row">
                 <div class="col-lg-6 col-md-9 col-sm-12 input">
-                    {{ form.teams_played|as_crispy_field }}
+                    {{ form.competition_class|as_crispy_field }}
                 </div>
             </div>
             <div class="row">
@@ -38,7 +44,7 @@
                     <input type="submit" class="btn btn-dark" value="Dodaj">
                 </div>
                 <div class="col-6 button-right">
-                    <a href="{% url 'leagues' %}" class="btn btn-dark">Anuluj</a>
+                    <a href="{% url 'league-list' %}" class="btn btn-dark">Anuluj</a>
                 </div>
             </div>
         </form>

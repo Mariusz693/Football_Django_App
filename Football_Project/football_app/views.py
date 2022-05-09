@@ -1,3 +1,4 @@
+import json
 from django.forms import ValidationError
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import View, FormView, ListView, CreateView, UpdateView, DetailView, DeleteView
@@ -5,10 +6,14 @@ from django.contrib.auth import login, logout
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import NON_FIELD_ERRORS
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+from django.http  import JsonResponse
+from django.db.models import Q
 
-from .models import Game, League, Season, User, Team, SeasonTable
-from .forms import LoginForm, LeagueUpdateForm, TeamCreateForm, TeamUpdateForm, SeasonCreateForm
-from .utils import create_season
+from .models import Game, League, Season, Team
+from .forms import LoginForm, SeasonCreateForm
+from .utils import create_season, calculate_points
 
 # Create your views here.
 
@@ -62,55 +67,148 @@ class LogoutView(View):
         return redirect("index")
 
 
-class LeaguesView(ListView):
+class TeamListView(ListView):
+    """
+    Return a list of all teams
+    """
+    model = Team
+    template_name = "team_list.html"
+    context_object_name = "team_list"
+
+
+class TeamView(View):
+    """
+    Return a team info or team table view
+    """
+    def get(self, request, pk):
+        team = Team.objects.get(pk=pk)
+        if team.seasons.first():
+            return redirect(reverse_lazy("team-table", args=(team.pk, team.seasons.first().pk,)))
+        else:
+            return redirect(reverse_lazy("team-info", args=(team.pk,)))
+
+
+class TeamInfoView(DetailView):
+    """
+    Return the team info view
+    """
+    model = Team
+    template_name = "team_info.html"
+    context_object_name = "team"
+
+
+class TeamCreateView(LoginRequiredMixin, CreateView):
+    """
+    Return the add team form view
+    """
+    model = Team
+    fields = ["name", "country"]
+    template_name = "team_create.html"
+    
+    def get_success_url(self):
+        
+        return reverse_lazy("team-info", args=(self.object.pk,))
+
+
+class TeamUpdateView(LoginRequiredMixin, UpdateView):
+    """
+    Return the update team form view
+    """
+    model = Team
+    fields = ["name"]
+    template_name = "team_update.html"
+    context_object_name = "team"
+    
+    def get_success_url(self):
+
+        return reverse_lazy("team-info", args=(self.object.pk,))
+
+
+class TeamDeleteView(LoginRequiredMixin, DeleteView):
+    """
+    Return the delete team form view
+    """
+    model = Team
+    template_name = "team_delete.html"
+    context_object_name = "team"
+    success_url = reverse_lazy("team-list")
+    
+    def form_valid(self, form):
+
+        if self.object.seasons.filter(is_active=True):
+            form.add_error(NON_FIELD_ERRORS, "W trakcie trwającego sezonu nie można usunąć drużyny")
+            
+            return self.form_invalid(form)
+
+        return super().form_valid(form)
+
+
+class TeamTableView(DetailView):
+    """
+    Return a list of league seasons
+    """
+    model = Team
+    template_name = "team_table.html"
+    context_object_name = "team"
+    
+    def get_context_data(self, *args, **kwargs):
+        
+        context = super().get_context_data(*args, **kwargs)
+        season = get_object_or_404(Season, pk=self.kwargs["pk_season"])
+        context["season"] = season
+        context["next"] = Season.objects.filter(
+            season_teams=self.object,
+            date_start__gt=season.date_start
+            ).last()
+        context["prev"] = Season.objects.filter(
+            season_teams=self.object,
+            date_start__lt=season.date_start
+            ).first()
+        
+        return context
+
+
+class TeamMatchView(DetailView):
+    """
+    Return a list of league seasons
+    """
+    model = Team
+    template_name = "team_match.html"
+    context_object_name = "team"
+    
+    def get_context_data(self, *args, **kwargs):
+        
+        context = super().get_context_data(*args, **kwargs)
+        season = get_object_or_404(Season, pk=self.kwargs["pk_season"])
+        context["season"] = season
+        context["next"] = Season.objects.filter(
+            season_teams=self.object,
+            date_start__gt=season.date_start
+            ).last()
+        context["prev"] = Season.objects.filter(
+            season_teams=self.object,
+            date_start__lt=season.date_start
+            ).first()
+        context["match_list"] = Game.objects.filter(season=season).filter(
+            Q(team_home=self.object)|Q(team_away=self.object)
+        )
+
+        return context
+
+
+class LeagueListView(ListView):
     """
     Return a list of all leagues
     """
     model = League
-    template_name = "leagues.html"
-
-
-class LeagueCreateView(LoginRequiredMixin, CreateView):
-    """
-    Return the add league form view
-    """
-    model = League
-    fields = ["name", "country", "teams_played"]
-    template_name = "league_create.html"
-    success_url = reverse_lazy("leagues")
-
-
-class LeagueUpdateView(LoginRequiredMixin, UpdateView):
-    """
-    Return the update league form view
-    """
-    model = League
-    form_class = LeagueUpdateForm
-    template_name = "league_update.html"
-    
-    def get_success_url(self):
-        
-        return reverse_lazy("league-info", args=(self.object.pk,))
-
-
-class LeagueDeleteView(LoginRequiredMixin, DeleteView):
-    """
-    Return the delete league form view
-    """
-    model = League
-    template_name = "league_delete.html"
-    success_url = reverse_lazy("leagues")
-    
-    def form_valid(self, form):
-        if self.object.seasons.filter(date_end=None):
-            form.add_error(NON_FIELD_ERRORS, "W trakcie trwającego sezonu nie można usunąć ligi")
-            return self.form_invalid(form)
-            
-        return super().form_valid(form)
+    template_name = "league_list.html"
+    context_object_name = "league_list"
 
 
 class LeagueView(View):
-
+    """
+    Return a league info or league table view
+    """
     def get(self, request, pk):
         league = League.objects.get(pk=pk)
         if league.seasons.first():
@@ -125,58 +223,53 @@ class LeagueInfoView(DetailView):
     """
     model = League
     template_name = "league_info.html"
+    context_object_name = "league"
 
 
-class SeasonTableView(DetailView):
+class LeagueCreateView(LoginRequiredMixin, CreateView):
     """
-    Return a list of league seasons
+    Return the add league form view
     """
-    model = Season
-    template_name = "season_table.html"
+    model = League
+    fields = ["name", "country", "competition_class"]
+    template_name = "league_create.html"
+        
+    def get_success_url(self):
+        
+        return reverse_lazy("league-info", args=(self.object.pk,))
+
+
+class LeagueUpdateView(LoginRequiredMixin, UpdateView):
+    """
+    Return the update league form view
+    """
+    model = League
+    fields = ["name"]
+    template_name = "league_update.html"
+    context_object_name = "league"
     
-    def get_context_data(self, *args, **kwargs):
+    def get_success_url(self):
         
-        context = super().get_context_data(*args, **kwargs)
-        context["next"] = Season.objects.filter(
-            league=self.object.league,
-            season_years__startswith=self.object.season_years[5:]
-            ).first()
-        context["prev"] = Season.objects.filter(
-            league=self.object.league,
-            season_years__endswith=self.object.season_years[:4]
-            ).first()
-
-        return context
+        return reverse_lazy("league-info", args=(self.object.pk,))
 
 
-class SeasonMatchView(ListView):
+class LeagueDeleteView(LoginRequiredMixin, DeleteView):
     """
-    Return a list of league seasons
+    Return the delete league form view
     """
-    model = Game
-    template_name = "season_match.html"
-
-    def get_queryset(self, *args, **kwargs):
-        self.season = get_object_or_404(Season, pk=self.kwargs['pk'])
-        self.paginate_by = self.season.season_table.count()/2
-        object_list = self.season.games.all()
-        
-        return object_list
+    model = League
+    template_name = "league_delete.html"
+    context_object_name = "league"
+    success_url = reverse_lazy("league-list")
     
-    def get_context_data(self, *args, **kwargs):
+    def form_valid(self, form):
         
-        context = super().get_context_data(*args, **kwargs)
-        context['season'] = self.season
-        context["next"] = Season.objects.filter(
-            league=self.season.league,
-            season_years__startswith=self.season.season_years[5:]
-            ).first()
-        context["prev"] = Season.objects.filter(
-            league=self.season.league,
-            season_years__endswith=self.season.season_years[:4]
-            ).first()
-
-        return context
+        if self.object.seasons.filter(is_active=True):
+            form.add_error(NON_FIELD_ERRORS, "W trakcie trwającego sezonu nie można usunąć ligi")
+        
+            return self.form_invalid(form)
+            
+        return super().form_valid(form)
 
 
 class SeasonCreateView(LoginRequiredMixin, CreateView):
@@ -191,6 +284,7 @@ class SeasonCreateView(LoginRequiredMixin, CreateView):
         return reverse_lazy("season-table", args=(self.object.pk,))
 
     def get_initial(self, *args, **kwargs):
+        
         initial = super().get_initial(*args, **kwargs)
         self.league = get_object_or_404(League, pk=self.kwargs["pk"])
         initial["league"] = self.league
@@ -198,22 +292,29 @@ class SeasonCreateView(LoginRequiredMixin, CreateView):
         return initial
 
     def get_context_data(self, *args, **kwargs):
+        
         context = super().get_context_data(*args, **kwargs)
         context["league"] = self.league
 
         return context
-
+    
+    def get_form_kwargs(self):
+        
+        kwargs = super().get_form_kwargs()
+        kwargs['league'] = self.league
+        
+        return kwargs
+    
     def form_valid(self, form):
         self.object = form.save()
         try:
             create_season(season=self.object)
-        
         except ValidationError as e:
             form.add_error(NON_FIELD_ERRORS, e)
             return self.form_invalid(form)
         
         return super().form_valid(form)
-        
+
 
 class SeasonDeleteView(LoginRequiredMixin, DeleteView):
     """
@@ -226,67 +327,76 @@ class SeasonDeleteView(LoginRequiredMixin, DeleteView):
         return reverse_lazy("league-info", args=(self.object.league.pk,))
 
     def form_valid(self, form):
-        if self.object.date_end is None:
+        if self.object.is_active == True:
             form.add_error(NON_FIELD_ERRORS, "W trakcie trwającego sezonu nie można go usunąć")
             return self.form_invalid(form)
             
         return super().form_valid(form)
 
 
-class TeamsView(ListView):
+class SeasonTableView(DetailView):
     """
-    Return a list of all teams
+    Return a season table
     """
-    model = Team
-    template_name = "teams.html"
-
-
-class TeamCreateView(LoginRequiredMixin, CreateView):
-    """
-    Return the add team form view
-    """
-    model = Team
-    form_class = TeamCreateForm
-    template_name = "team_create.html"
-    success_url = reverse_lazy("teams")
-
-
-class TeamSeasonsView(DetailView):
-    """
-    Return the team seasons view
-    """
-    model = Team
-    template_name = "team_seasons.html"
-
-
-class TeamUpdateView(LoginRequiredMixin, UpdateView):
-    """
-    Return the update team form view
-    """
-    model = Team
-    form_class = TeamUpdateForm
-    template_name = "team_update.html"
+    model = Season
+    template_name = "season_table.html"
+    context_object_name = "season"
     
-    # def get_success_url(self):
-    #     return reverse_lazy("team-seasons", args=(self.object.pk,))
+    def get_context_data(self, *args, **kwargs):
+        
+        context = super().get_context_data(*args, **kwargs)
+        context["next"] = Season.objects.filter(
+            league=self.object.league,
+            date_start__gt=self.object.date_start
+            ).last()
+        context["prev"] = Season.objects.filter(
+            league=self.object.league,
+            date_start__lt=self.object.date_start
+            ).first()
 
-    def get_success_url(self):
+        return context
 
-        return self.request.GET.get('next') or reverse_lazy("team-seasons", args=(self.object.pk,))
-    
 
-class TeamDeleteView(LoginRequiredMixin, DeleteView):
+class SeasonMatchView(ListView):
     """
-    Return the delete team form view
+    Return a seasons match
     """
-    model = Team
-    template_name = "team_delete.html"
-    success_url = reverse_lazy("teams")
-    
-    def form_valid(self, form):
+    model = Game
+    template_name = "season_match.html"
+    context_object_name = "match_list"
 
-        if self.object.actuall_season:
-            form.add_error(NON_FIELD_ERRORS, "W trakcie trwającego sezonu nie można usunąć drużyny")
-            return self.form_invalid(form)
-            
-        return super().form_valid(form)
+    def get_queryset(self, *args, **kwargs):
+        self.season = get_object_or_404(Season, pk=self.kwargs['pk'])
+        self.paginate_by = self.season.number_of_teams/2
+        match_list = self.season.games.all()
+        
+        return match_list
+    
+    def get_context_data(self, *args, **kwargs):
+        
+        context = super().get_context_data(*args, **kwargs)
+        context['season'] = self.season
+        context["next"] = Season.objects.filter(
+            league=self.season.league,
+            date_start__gt=self.season.date_start
+            ).last()
+        context["prev"] = Season.objects.filter(
+            league=self.season.league,
+            date_start__lt=self.season.date_start
+            ).first()
+
+        return context
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class AddGoalsView(View):
+    
+    def post(self, request):
+
+        data = json.loads(request.body.decode())
+        
+        if calculate_points(data=data):
+
+            return JsonResponse({'status': "True"}, status=200)
+
+        return JsonResponse({'status': "False"}, status=200)

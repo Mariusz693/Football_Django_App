@@ -3,23 +3,23 @@
 <div class="page-title">
     <div class="row">
         <div class="col-6 header-left">
-            <h3>{{ league }}</h3>
+            <h3>{{ team }}</h3>
         </div>
     </div>
 </div>
 <div class="card text-center">
     <div class="card-header">
         <ul class="nav nav-tabs card-header-tabs">
-            {% if league.seasons.first %}
+            {% if team.seasons.first %}
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'season-table' pk=league.seasons.first.pk %}">Tabela</a>
+                <a class="nav-link" href="{% url 'team-table' pk=team.pk pk_season=team.seasons.first.pk %}">Tabela ligowa</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'season-match' pk=league.seasons.first.pk %}">Kolejki</a>
+                <a class="nav-link" href="{% url 'team-match' pk=team.pk pk_season=team.seasons.first.pk %}">Mecze</a>
             </li>
             {% endif %}
             <li class="nav-item">
-                <a class="nav-link active" href="{% url 'league-info' pk=league.pk %}">Liga</a>
+                <a class="nav-link active" href="{% url 'team-info' pk=team.pk %}">Drużyna</a>
             </li>
         </ul>
     </div>
@@ -27,23 +27,21 @@
         <h5 class="card-title">Informacje</h5>
         <div class="list">
             <ul>
-                <li>Nazwa: <b>{{ league }}</b></li>
-                <li>Kraj: <b>{{ league.country.name }}</b></li>
-                <li>Poziom rozgrywek: <b>{{ league.competition_class }} klasa</b></li>
+                <li>Nazwa: <b>{{ team }}</b></li>
+                <li>Kraj: <b>{{ team.country.name }}</b></li>
                 <li>
-                    Aktualny sezon: 
-                    <b>{% if league.seasons.first.is_active %}{{ league.seasons.first.season_years }}{% else %}-----{% endif %}</b>
+                    Obecne rozgrywki: 
+                    <b>{% if team.seasons.first.is_active %} {{ team.seasons.first }} {% else %} ----- {% endif %}</b>
                 </li>
-                <li>Rozegrane sezony: <b>{{ league.seasons.count }}</b></li>
             </ul>
         </div>
         {% if request.user.is_authenticated %}
         <div class="row">
             <div class="col-6 button-left">
-                <a class="btn btn-dark" href="{% url 'league-update' pk=league.pk %}">Edytuj lige</a>
+                <a class="btn btn-dark" href="{% url 'team-update' pk=team.pk %}">Edytuj</a>
             </div>
             <div class="col-6 button-right">
-                <a class="btn btn-danger" href="{% url 'league-delete' pk=league.pk %}">Usuń lige</a>
+                <a class="btn btn-danger" href="{% url 'team-delete' pk=team.pk %}">Usuń</a>
             </div>
         </div>
         {% endif %}
@@ -58,10 +56,10 @@
                 </tr>
             </thead>
             <tbody>
-                {% for season in league.seasons.all %}
+                {% for season in team.seasons.all %}
                 <tr class="d-flex">
                     <td class="col-4">
-                        <a href="{% url 'season-table' pk=season.pk %}">{{ season }}</a>
+                        <a href="{% url 'team-table' pk=team.pk pk_season=season.pk %}">{{ season }}</a>
                     </td>
                     <td class="col-3">{{ season.date_start|date:"d.m.Y" }}</td>
                     <td class="col-3">{{ season.date_end|date:"d.m.Y" }}</td>
@@ -69,24 +67,13 @@
                         {% if season.is_active %}
                         &#10003;
                         {% else %}
-                        {% if request.user.is_authenticated %}
-                        <a href="{% url 'season-delete' pk=season.pk %}">&#10007;</a>
-                        {% else %}
                         &#10007;
-                        {% endif %}
                         {% endif %}
                     </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
-        {% if request.user.is_authenticated %}
-        <div class="row">
-            <div class="col-12 button-left">
-                <a href="{% url 'season-create' pk=league.pk %}" class="btn btn-dark">Stwórz nowy</a>
-            </div>
-        </div>
-        {% endif %}
     </div>
 </div>
 {% endblock %}

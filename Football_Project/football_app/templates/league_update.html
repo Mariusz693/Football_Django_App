@@ -22,14 +22,18 @@
         <h5 class="card-title">Edytuj ligę</h5>
         <form class="form-control" action="" method="POST">
             {% csrf_token %}
+            {% if form.non_field_errors %}
+                {% for error in form.non_field_errors %}
+                    <div class="row">
+                        <div class="col-12 text">
+                            <p class="text-danger"><strong>{{ error }}</strong></p>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
             <div class="row">
                 <div class="col-lg-6 col-md-9 col-sm-12 input">
                     {{ form.name|as_crispy_field }}
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-6 col-md-9 col-sm-12 input">
-                    {{ form.teams_played|as_crispy_field }}
                 </div>
             </div>
             <div class="row">
@@ -37,7 +41,7 @@
                     <input type="submit" class="btn btn-dark" value="Zapisz">
                 </div>
                 <div class="col-6 button-right">
-                    <a href="{% url 'league-info' pk=league.pk %}" class="btn btn-dark">Anuluj</a>
+                    <a class="btn btn-dark" href="{% url 'league-info' pk=league.pk %}">Anuluj</a>
                 </div>
             </div>
         </form>

@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'django_countries',
     'crispy_forms',
+    'formtools',
     'football_app',
 ]
 

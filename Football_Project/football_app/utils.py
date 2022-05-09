@@ -6,8 +6,7 @@ from datetime import timedelta
 
 def create_season(season):
     
-    teams = season.league.teams.all()
-    season.season_table.set(teams)
+    teams = season.teams.all()
     teams = list(teams)
     number_of_teams = len(teams)
     if number_of_teams % 2 == 1:
@@ -81,3 +80,47 @@ def create_season(season):
     if number_to_check != games.count():
         season.delete()
         raise ValidationError("Błąd tworzenia sezonu i terminarza")
+    else:
+        season.date_end = games.last().match_day_date
+        season.save()
+
+
+def calculate_points(data):
+    
+    game = Game.objects.filter(pk=data["pk"]).first()
+    if game and game.team_home_goals is None:
+        season = game.season
+        try:
+            game.team_home_goals = int(data["team_home_goals"])
+            game.team_away_goals = int(data["team_away_goals"])
+            game.save()
+        except:
+            return False
+
+        season_team_home = season.season_team_table.filter(team=game.team_home).first()
+        season_team_home.matches_played += 1
+        season_team_home.goals_scored += game.team_home_goals
+        season_team_home.goals_lost += game.team_away_goals
+        season_team_away = season.season_team_table.filter(team=game.team_away).first()
+        season_team_away.matches_played += 1
+        season_team_away.goals_scored += game.team_away_goals
+        season_team_away.goals_lost += game.team_home_goals
+        
+        if game.team_home_goals > game.team_away_goals:
+            season_team_home.points += 3
+        elif game.team_home_goals < game.team_away_goals:
+            season_team_away.points += 3
+        else:
+            season_team_home.points += 1
+            season_team_away.points += 1
+
+        season_team_home.save()
+        season_team_away.save()
+        
+        if season.games.filter(team_home_goals=None).count() == 0:
+            season.is_active = False
+            season.save()
+
+        return True
+    
+    return False

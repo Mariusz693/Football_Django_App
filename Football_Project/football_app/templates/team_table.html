@@ -3,13 +3,13 @@
 <div class="page-title">
     <div class="row">
         <div class="col-6 header-left">
-            <h3>{{ season.league }}</h3>
+            <h3>{{ team }}</h3>
         </div>
         <div class="col-6 header-right">
             <h3>sezon 
-                {% if prev %}<a href="{% url 'season-table' pk=prev.pk %}">&laquo;</a>{% endif %}
+                {% if prev %}<a href="{% url 'team-table' pk=team.pk pk_season=prev.pk%}">&laquo;</a>{% endif %}
                 {{ season.season_years }}
-                {% if next %}<a href="{% url 'season-table' pk=next.pk %}">&raquo;</a>{% endif %}
+                {% if next %}<a href="{% url 'team-table' pk=team.pk pk_season=next.pk %}">&raquo;</a>{% endif %}
             </h3>
         </div>
     </div>
@@ -18,18 +18,18 @@
     <div class="card-header">
         <ul class="nav nav-tabs card-header-tabs">
             <li class="nav-item">
-                <a class="nav-link active" href="{% url 'season-table' pk=season.pk %}">Tabela</a>
+                <a class="nav-link active" href="{% url 'team-table' pk=team.pk pk_season=season.pk %}">Tabela ligowa</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'season-match' pk=season.pk %}">Kolejki</a>
+                <a class="nav-link" href="{% url 'team-match' pk=team.pk pk_season=season.pk %}">Mecze</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'league-info' pk=season.league.pk %}">Liga</a>
+                <a class="nav-link" href="{% url 'team-info' pk=team.pk %}">Drużyna</a>
             </li>
         </ul>
     </div>
     <div class="card-body">
-        <h5 class="card-title">Tabela ligowa</h5>
+        <h5 class="card-title">Tabela ligowa - <a href="{% url 'season-table' pk=season.pk %}">{{ season }}</a></h5>
         <table class="table">
             <thead>
                 <tr class="d-flex">
@@ -45,7 +45,11 @@
                 <tr class="d-flex">
                     <td class="col-1">{{ forloop.counter }}</td>
                     <td class="col-5">
-                        <a href="{% url 'team-table' pk=season_team.team.pk pk_season=season.pk %}">{{ season_team.team }}</a>
+                        {% if season_team.team == team %}
+                        <a href="{% url 'team-table' pk=team.pk pk_season=season.pk %}">{{ season_team.team }}</a>
+                        {% else %}
+                        {{ season_team.team }}
+                        {% endif %}
                     </td>
                     <td class="col-2 text-center">{{ season_team.points }}</td>
                     <td class="col-2 text-center">{{ season_team.goals_scored }}:{{ season_team.goals_lost }}</td>

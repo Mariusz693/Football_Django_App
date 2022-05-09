@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% load crispy_forms_tags %}
 {% block content %}
 <div class="page-title">
@@ -20,6 +21,20 @@
     </div>
     <div class="card-body">
         <h5 class="card-title">Stwórz sezon</h5>
+        {% if league.seasons.first.is_active %}
+        <div class="form-control">
+            <div class="row">
+                <div class="col-12 text">
+                    <p class="text-danger"><strong>Poprzedni sezon nie został jeszcze zakończony</strong></p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 button-right">
+                    <a href="{% url 'league-info' pk=league.pk %}" class="btn btn-dark">Anuluj</a>
+                </div>
+            </div>
+        </div>
+        {% else %}
         <form class="form-control" action="" method="POST">
             {% csrf_token %}
             {% if form.non_field_errors %}
@@ -38,26 +53,26 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-12 list">
-                    <span class="list-title">Lista zapisanych Drużyn - {{ league.teams_played }} wymaganych</span>
-                    <ol>
-                        {% for team in league.teams.all %}
-                        <li><a class="link" href="{% url 'team-update' pk=team.pk %}?next={{ request.get_full_path }}">{{ team }}</a></li>
-                        {% endfor %}
-                    </ol>
-                    <div class="link">
-                        <a class="link" href="{% url 'teams' %}">Wszystkie drużyny</a>
-                    </div>
+                <div class="col-lg-6 col-md-9 col-sm-12 input">
+                    {{ form.number_of_teams|as_crispy_field }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 input">
+                    {{ form.season_teams|as_crispy_field }}
                 </div>
             </div>
             <div class="row">
                 <div class="col-6 button-left">
-                    <input type="submit" class="btn btn-dark" value="Stwórz sezon">
+                    <input type="submit" class="btn btn-dark" value="Stwórz"/>
                 </div>
                 <div class="col-6 button-right">
                     <a href="{% url 'league-info' pk=league.pk %}" class="btn btn-dark">Anuluj</a>
                 </div>
             </div>
         </form>
+        {% endif %}
     </div>
+</div>
+<script src="{% static 'js/season.js' %}"></script>
 {% endblock %}

@@ -41,10 +41,10 @@
         <div class="wrapper">
             <div class="sidebar">
                 <h3>
-                    <a href="{% url 'leagues' %}">Ligi</a>
+                    <a href="{% url 'league-list' %}">Ligi</a>
                 </h3>
                 <h3>
-                    <a href="{% url 'teams' %}">Drużyny</a>
+                    <a href="{% url 'team-list' %}">Drużyny</a>
                 </h3>
                 <ul>
                     {% for league in leagues %}
@@ -60,7 +60,7 @@
         </div>
     </section>
     <footer class="text-center text-white fixed-bottom bg-dark">
-        <div class="text-center p-3">© 2021 Copyright: Mariusz Kuleta</div>
+        <div class="text-center p-3">© 2022 Copyright: Mariusz Kuleta</div>
     </footer>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>

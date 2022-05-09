@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="page-title">
-    <h3>Drużyny</h3>
+    <h3>Ligi piłkarskie</h3>
 </div>
 <div class="card text-center">
     <div class="card-header">
@@ -10,10 +10,10 @@
                 <a class="nav-link" href="{% url 'index' %}">Strona domowa</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'leagues' %}">Ligi</a>
+                <a class="nav-link active" href="{% url 'league-list' %}">Ligi piłkarskie</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link active" href="{% url 'teams' %}">Drużyny</a>
+                <a class="nav-link" href="{% url 'team-list' %}">Drużyny</a>
             </li>
         </ul>
     </div>
@@ -22,24 +22,18 @@
             <thead>
                 <tr class="d-flex">
                     <th class="col-6">Nazwa</th>
-                    <th class="col-3">Kraj</th>
-                    <th class="col-3 text-center">Aktualna liga</th>
+                    <th class="col-3 text-center">Kraj</th>
+                    <th class="col-3 text-center">Klasa rozgrywek</th>
                 </tr>
             </thead>
             <tbody>
-                {% for team in team_list %}
+                {% for league in league_list %}
                 <tr class="d-flex">
                     <td class="col-6">
-                        <a href="{% url 'team-seasons' pk=team.pk %}">{{ team.name }}</a>
+                        <a href="{% url 'league' pk=league.pk %}">{{ league.name }}</a>
                     </td>
-                    <td class="col-3">{{ team.country.name }}</td>
-                    <td class="col-3 text-center">
-                        {% if team.actuall_league %}
-                        {{ team.actuall_league }}
-                        {% else %}
-                        Brak przypisania
-                        {% endif %}
-                    </td>
+                    <td class="col-3 text-center">{{ league.country.name }}</td>
+                    <td class="col-3 text-center">{{ league.competition_class }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -47,7 +41,7 @@
         {% if request.user.is_authenticated %}
         <div class="row">
             <div class="col-12 button-left">
-                <a href="{% url 'team-create' %}" class="btn btn-dark">Dodaj</a>
+                <a href="{% url 'league-create' %}" class="btn btn-dark">Dodaj</a>
             </div>
         </div>
         {% endif %}

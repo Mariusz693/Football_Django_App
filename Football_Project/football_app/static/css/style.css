@@ -104,14 +104,23 @@ table.table {
     text-align: left;
 }
 
+/* table.table thead tr th{
+    font-weight: normal;
+} */
+
 table.table tbody tr td a {
     text-decoration: none;
     color: black;
+    font-weight: bold;
 }
 
 h5.card-title {
     margin: 10px;
     text-align: left;
+}
+
+h5.card-title a {
+    color: black;
 }
 
 div.list {
@@ -156,4 +165,73 @@ div.header-right a {
 
 a.page-link {
     color: black;
+}
+
+h5.text-center {
+    text-align: center;
+}
+
+div.button-right-modal {
+    padding: 10px;
+    padding-right: 20px;
+    text-align: right;
+    text-decoration: #fff;
+}
+
+div.button-left-modal {
+    padding: 10px;
+    padding-left: 20px;
+    text-align: left;
+    text-decoration: #fff;
+}
+
+div.footer-modal {
+    margin: 2px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+div.header-modal {
+    margin: 2px;
+    padding-top: 25px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(225,225,225); 
+}
+
+div.body-modal {
+    margin: 2px;
+    padding-top: 25px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(225,225,225);
+    font-weight: bold;
+}
+
+input.modal-input {
+    border: none;
+    width: 35px;
+    margin: auto;
+    display: block;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+input[type=number] {
+    -moz-appearance:textfield; /* Firefox */
+}
+
+p.error {
+    color: red;
+}
+
+div.display-none {
+    display: none;
+}
+
+div.display-active {
+    display: block;
 }
