@@ -17,29 +17,46 @@
             {% csrf_token %}
             {% if form.non_field_errors %}
                 {% for error in form.non_field_errors %}
-                    <div class="row">
-                        <div class="col-12 text">
+                    <div class="row row-center">
+                        <div class="col-lg-6 col-md-9 col-sm-12 text">
                             <p class="text-danger"><strong>{{ error }}</strong></p>
                         </div>
                     </div>
                 {% endfor %}
             {% endif %}
-            <div class="row">
+            {% if messages %}
+                {% for message in messages %}
+                {% if message.level ==  DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                    <div class="row row-center">
+                        <div class="col-lg-6 col-md-9 col-sm-12 text">
+                            <p class="text-success">
+                                <strong>Dodano nową drużynę - </strong><a href="{% url 'team-info' pk=message.extra_tags %}">{{ message.message }}</a>
+                            </p>
+                        </div>
+                    </div>
+                {% endif %}
+                {% endfor %}
+            {% endif %}
+            <div class="row row-center">
                 <div class="col-lg-6 col-md-9 col-sm-12 input">
                     {{ form.name|as_crispy_field }}
                 </div>
             </div>
-            <div class="row">
+            <div class="row row-center">
                 <div class="col-lg-6 col-md-9 col-sm-12 input">
                     {{ form.country|as_crispy_field }}
                 </div>
             </div>
-            <div class="row">
-                <div class="col-6 button-left">
-                    <input type="submit" class="btn btn-dark" value="Dodaj">
-                </div>
-                <div class="col-6 button-right">
-                    <a href="{% url 'team-list' %}" class="btn btn-dark">Anuluj</a>
+            <div class="row row-center">
+                <div class="col-lg-6 col-md-9 col-sm-12">
+                    <div class="row">
+                        <div class="col-6 button-left">
+                            <input type="submit" class="btn btn-dark" value="Dodaj">
+                        </div>
+                        <div class="col-6 button-right">
+                            <a href="{% url 'team-list' %}" class="btn btn-dark">Anuluj</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </form>

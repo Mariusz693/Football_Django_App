@@ -24,24 +24,28 @@
             {% csrf_token %}
             {% if form.non_field_errors %}
                 {% for error in form.non_field_errors %}
-                    <div class="row">
-                        <div class="col-12 text">
+                    <div class="row row-center">
+                        <div class="col-lg-6 col-md-9 col-sm-12 text">
                             <p class="text-danger"><strong>{{ error }}</strong></p>
                         </div>
                     </div>
                 {% endfor %}
             {% endif %}
-            <div class="row">
-                <div class="col-12 text">
+            <div class="row row-center">
+                <div class="col-lg-6 col-md-9 col-sm-12 text">
                     <h5>Potwierdź usunięcie ligi: <b>{{ league }}</b></h5>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-6 button-left">
-                    <input type="submit" class="btn btn-dark" value="Potwierdź">
-                </div>
-                <div class="col-6 button-right">
-                    <a class="btn btn-success" href="{% url 'league-info' pk=league.pk %}">Anuluj</a>
+            <div class="row row-center">
+                <div class="col-lg-6 col-md-9 col-sm-12">
+                    <div class="row">
+                        <div class="col-6 button-left">
+                            <input type="submit" class="btn btn-dark" value="Potwierdź">
+                        </div>
+                        <div class="col-6 button-right">
+                            <a class="btn btn-success" href="{% url 'league-info' pk=league.pk %}">Anuluj</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </form>

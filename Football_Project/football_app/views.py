@@ -1,4 +1,5 @@
 import json
+from urllib import request
 from django.forms import ValidationError
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import View, FormView, ListView, CreateView, UpdateView, DetailView, DeleteView
@@ -10,6 +11,8 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.http  import JsonResponse
 from django.db.models import Q
+from django.contrib import messages
+
 
 from .models import Game, League, Season, Team
 from .forms import LoginForm, SeasonCreateForm
@@ -104,10 +107,13 @@ class TeamCreateView(LoginRequiredMixin, CreateView):
     model = Team
     fields = ["name", "country"]
     template_name = "team_create.html"
-    
-    def get_success_url(self):
+    success_url = reverse_lazy("team-create")
         
-        return reverse_lazy("team-info", args=(self.object.pk,))
+    def form_valid(self, form):
+        self.object = form.save()
+        messages.success(self.request, message=self.object.name, extra_tags=self.object.pk)
+        
+        return super().form_valid(form)
 
 
 class TeamUpdateView(LoginRequiredMixin, UpdateView):
@@ -233,11 +239,14 @@ class LeagueCreateView(LoginRequiredMixin, CreateView):
     model = League
     fields = ["name", "country", "competition_class"]
     template_name = "league_create.html"
-        
-    def get_success_url(self):
-        
-        return reverse_lazy("league-info", args=(self.object.pk,))
+    success_url = reverse_lazy("league-create")
 
+    def form_valid(self, form):
+        self.object = form.save()
+        messages.success(self.request, message=self.object.name, extra_tags=self.object.pk)
+        
+        return super().form_valid(form)
+    
 
 class LeagueUpdateView(LoginRequiredMixin, UpdateView):
     """
@@ -282,30 +291,48 @@ class SeasonCreateView(LoginRequiredMixin, CreateView):
 
     def get_success_url(self):
         return reverse_lazy("season-table", args=(self.object.pk,))
-
-    def get_initial(self, *args, **kwargs):
+    
+    def get_form(self, *args, **kwargs):
         
-        initial = super().get_initial(*args, **kwargs)
+        form = super().get_form(*args, **kwargs)
+        self.form_visible = True
         self.league = get_object_or_404(League, pk=self.kwargs["pk"])
-        initial["league"] = self.league
-
-        return initial
+        if self.league.seasons.filter(is_active=True):
+            form.errors.update({NON_FIELD_ERRORS: ("Poprzedni sezon nie został jeszcze zakończony",)})
+            self.form_visible = False
+        else:
+            teams_free = []
+            for team in Team.objects.filter(country=self.league.country):
+                if not team.seasons.filter(is_active=True):
+                    teams_free.append(team.pk)
+            teams = Team.objects.filter(pk__in=teams_free)
+            form.fields["league"].initial = self.league
+            form.fields["season_teams"].queryset = teams
+            if teams.count() < 10:
+                form.errors.update({NON_FIELD_ERRORS: ("Za mało wolnych drużyn w kraju do stworzenia ligi, min. 10",)})
+        
+        return form
 
     def get_context_data(self, *args, **kwargs):
         
         context = super().get_context_data(*args, **kwargs)
         context["league"] = self.league
+        context["form_visible"] = self.form_visible
 
         return context
     
-    def get_form_kwargs(self):
-        
-        kwargs = super().get_form_kwargs()
-        kwargs['league'] = self.league
-        
-        return kwargs
-    
     def form_valid(self, form):
+        
+        season_teams = form.cleaned_data['season_teams']
+        number_of_teams = form.cleaned_data['number_of_teams']
+        date_start = form.cleaned_data["date_start"]
+        season_exists = self.league.seasons.first()
+        if number_of_teams != season_teams.count():
+            form.add_error(NON_FIELD_ERRORS, f"Wybierz odpowiednią liczbę drużyn - {number_of_teams}")
+        if season_exists and season_exists.date_start.year >= date_start.year:
+            form.add_error("date_start", f"Ostatni sezon to {season_exists.season_years}, stwórz kolejny")
+        if form.errors:
+            return self.form_invalid(form)
         self.object = form.save()
         try:
             create_season(season=self.object)

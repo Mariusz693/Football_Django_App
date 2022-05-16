@@ -21,38 +21,25 @@
     </div>
     <div class="card-body">
         <h5 class="card-title">Stwórz sezon</h5>
-        {% if league.seasons.first.is_active %}
-        <div class="form-control">
-            <div class="row">
-                <div class="col-12 text">
-                    <p class="text-danger"><strong>Poprzedni sezon nie został jeszcze zakończony</strong></p>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-12 button-right">
-                    <a href="{% url 'league-info' pk=league.pk %}" class="btn btn-dark">Anuluj</a>
-                </div>
-            </div>
-        </div>
-        {% else %}
         <form class="form-control" action="" method="POST">
             {% csrf_token %}
             {% if form.non_field_errors %}
                 {% for error in form.non_field_errors %}
-                    <div class="row">
-                        <div class="col-12 text">
+                    <div class="row row-center">
+                        <div class="col-lg-6 col-md-9 col-sm-12 text">
                             <p class="text-danger"><strong>{{ error }}</strong></p>
                         </div>
                     </div>
                 {% endfor %}
             {% endif %}
-            <div class="row">
+            {% if form_visible %}
+            <div class="row row-center">
                 <div class="col-lg-6 col-md-9 col-sm-12 input">
                     {{ form.date_start|as_crispy_field }}
                     {{ form.league|as_crispy_field }}
                 </div>
             </div>
-            <div class="row">
+            <div class="row row-center">
                 <div class="col-lg-6 col-md-9 col-sm-12 input">
                     {{ form.number_of_teams|as_crispy_field }}
                 </div>
@@ -70,8 +57,14 @@
                     <a href="{% url 'league-info' pk=league.pk %}" class="btn btn-dark">Anuluj</a>
                 </div>
             </div>
+            {% else %}
+            <div class="row">
+                <div class="col-12 button-right">
+                    <a href="{% url 'league-info' pk=league.pk %}" class="btn btn-dark">Anuluj</a>
+                </div>
+            </div>
+            {% endif %}
         </form>
-        {% endif %}
     </div>
 </div>
 <script src="{% static 'js/season.js' %}"></script>

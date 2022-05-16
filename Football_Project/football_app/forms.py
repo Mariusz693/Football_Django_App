@@ -50,35 +50,6 @@ class SeasonCreateForm(forms.ModelForm):
             "date_start": DateInput(),
             "season_teams": forms.CheckboxSelectMultiple(),
         }
-
-    def __init__(self, *args, **kwargs):
-        league = kwargs.pop('league')
-        super().__init__(*args, **kwargs)
-        teams = Team.objects.filter(country=league.country)
-        teams_free = []
-        for team in teams:
-            if not team.seasons.filter(is_active=True):
-                teams_free.append(team.pk)
-        if teams.filter(pk__in=teams_free).count() < 10:
-            self.fields["season_teams"].label = "Brak w bazie minimalnej liczby drużyn do stworzenia sezonu"
-        self.fields["season_teams"].queryset = teams.filter(pk__in=teams_free)
-    
-    def clean(self, *args, **kwargs):
-        
-        cleaned_data = super().clean(*args, **kwargs)
-        date_start = cleaned_data["date_start"]
-        league = cleaned_data["league"]
-        season_teams = cleaned_data["season_teams"]
-        number_of_teams = cleaned_data["number_of_teams"]
-        season_exists = league.seasons.first()
-
-        if season_exists and season_exists.is_active:
-            self.add_error(NON_FIELD_ERRORS, "Poprzedni sezon nie został jeszcze zakończony")
-        else:
-            if season_exists and season_exists.date_start.year >= date_start.year:
-                self.add_error("date_start", f"Ostatni sezon to {season_exists.season_years}, stwórz kolejny")
-            elif number_of_teams < 10 or number_of_teams > 24 or number_of_teams % 2 == 1:
-                self.add_error("number_of_teams", "Liczba drużyn musi być parzysta, min 10, max 24 drużyn")
-            elif number_of_teams != season_teams.count():
-                self.add_error("season_teams", f"Wybierz odpowiednią liczbę drużyn - {number_of_teams}")
-            
+        # labels = {
+        #     "season_teams": "Drużyny, wybrano -/-",
+        # }
