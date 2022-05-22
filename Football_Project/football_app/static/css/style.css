@@ -8,35 +8,44 @@
 
 body {
     background: #f3f5f9;
+    font-family: serif;
 }
 
-.navbar {
+h3 {
+    font-size: 1.5rem;
+    margin-top: 2px;
+    margin-bottom: 0px;
+}
+
+nav.navbar-style {
     padding-left: 10px;
     padding-right: 10px;
 }
 
-.main-logo {
-    font-family: "Charmonman", cursive;
+a.main-style {
     display: inline-block;
     color: white;
-    margin-top: 10px;
     margin-left: 25px;
-    font-size: 2.0rem;
-    font-weight: 600;
+    font-size: 1.8rem;
 }
 
-.dropdown-menu-right {
+img.logo-style {
+    width: 50px; 
+    height: 50px;
+}
+
+div.dropdown-style {
     right: 0;
     left: auto;
 }
 
-.wrapper {
+div.wrapper-style {
     display: flex;
     position: relative;
     margin-bottom: 55px;
 }
 
-.wrapper .sidebar {
+div.sidebar-style {
     width: 225px;
     background-color: #343a40;
     margin: 10px;
@@ -44,175 +53,232 @@ body {
     border-radius: 5px;
 }
 
-.wrapper .main-content {
+div.main-content-style {
     width: 100%;
     margin: 10px;
 }
 
-.wrapper .sidebar h3 {
+div.sidebar-style h3 {
     color: #fff;
-    text-transform: capitalize;
     text-align: center;
     margin-top: 10px;
 }
 
-.wrapper .sidebar ul li {
+div.sidebar-style h3 a {
+    color: #fff;
+    display: block;
+    text-decoration: none;
+}
+
+div.sidebar-style ul li {
     list-style: none;
     padding: 15px;
     border-bottom: 1px solid rgba(225,225,225,0.5);
 }
 
-.wrapper .sidebar ul li a {
+div.sidebar-style ul li a {
     color: #fff;
     display: block;
     text-decoration: none;
 }
 
-.wrapper .sidebar h3 a {
-    color: #fff;
-    display: block;
-    text-decoration: none;
+div.header-style {
+    height: 75px;
+    align-items: center;
+    font-size: 1.5rem;
+    padding: 5px;
 }
 
-div.page-title {
-    margin: 20px;
-}
-
-div.input {
-    padding: 10px;
-    text-align: left;
-    font-weight: bold;
-}
-
-div.text {
-    margin-top: 10px;
-}
-
-div.text a {
-    text-decoration: none;
-    color: black;
-    font-weight: bold;
-}
-
-div.button-right {
-    padding: 10px;
+div.header-right-style {
     text-align: right;
-    text-decoration: #fff;
 }
 
-div.button-left {
-    padding: 10px;
-    text-align: left;
-    text-decoration: #fff;
+div.pagination-style {
+    display: inline-block;
 }
 
-table.table {
-    text-align: left;
+div.pagination-style a {
+    color: black;
+    padding: 4px 8px;
+    text-decoration: none;
 }
 
-table.table tbody tr td a {
+div.pagination-style a.active {
+    background-color: black;
+    color: white;
+    border-radius: 5px;
+}
+
+div.pagination-style a.arrow {
+    padding: 4px 0px;
+}
+
+div.card-header-style {
+    height: 55px;
+}
+
+div.card-header-style ul li a {
+    color: black;
+}
+
+div.card-header-style ul li a:hover {
+    height: 47px;
+}
+
+div.card-header-style ul li a.active {
+    height: 47px;
+}
+
+div.search-style {
+    display: flex;
+    justify-content: end;
+    margin-right: -6px;
+}
+
+div.search-style a {
+    margin-left: 10px;
+}
+
+div.search-style form {
+    display: flex;
+    flex-direction: row;
+}
+
+div.search-style form input {
+    width: 100%;
+    padding: 6px;
+    height: 40px;
+    border: 1px solid grey;
+    background-color: white;
+    border-radius: 5px;
+    outline: none;
+}
+
+div.search-style form button {
+    background: transparent;
+    border: none;
+    outline: none;
+    margin-left: -33px;
+}
+
+div.search-style form button img {
+    width: 20px;
+    height: 20px;
+    object-fit: cover;
+}
+
+table.table-style {
+    margin-bottom: 0px;
+}
+
+table.table-style tbody tr td a {
     text-decoration: none;
     color: black;
-    font-weight: bold;
-}
-
-h5.card-title {
-    margin: 10px;
-    text-align: left;
-}
-
-h5.card-title a {
-    color: black;
-}
-
-div.list {
-    text-align: left;
-}
-
-span.list-title {
-    font-weight: bold;
-}
-
-a.link {
-    text-decoration: none;
-    margin-left: 15px;
-}
-
-div.link {
-    font-weight: bold;
-    margin-bottom: 15px;
-}
-
-h5.pagination-header {
-    margin-top: 10px;
-}
-
-div.pagination-row {
-    margin-left: 1px;
-    margin-right: 1px;
+    font-style: italic;
 }
 
 div.header-right {
-    text-align: right;
+    justify-content: end;
 }
 
-div.header-left {
-    text-align: left;
+div.input-style {
+    justify-content: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
-div.header-right a {
-    text-decoration: none;
-    color: black;
-}
-
-a.page-link {
-    color: black;
-}
-
-h5.text-center {
+div.message-style {
+    justify-content: center;
+    padding-top: 10px;
     text-align: center;
 }
 
-div.button-right-modal {
-    padding: 10px;
-    padding-right: 20px;
+div.message-style div p a {
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+}
+
+div.button-style {
     text-align: right;
-    text-decoration: #fff;
+    padding-top: 14px;
+    padding-bottom: 7px;
 }
 
-div.button-left-modal {
-    padding: 10px;
-    padding-left: 20px;
-    text-align: left;
-    text-decoration: #fff;
+div.input-style div.form-check {
+    float:left;
+    width:25%;
 }
 
-div.footer-modal {
-    margin: 2px;
-    padding-left: 10px;
-    padding-right: 10px;
+ul.list-style {
+    margin-left: -10px;
 }
 
-div.header-modal {
-    margin: 2px;
+div.card-center-style {
+    margin-left: 1px;
+    margin-right: 1px;
+    text-align: center;
+    align-items: center;
+    font-size: 1.25rem;
+}
+
+div.card-center-style div a {
+    color: black;
+    text-decoration: none;
+}
+
+select.select-pagination-style {
+    border: none;
+    font-size: 1.25rem;
+    text-align-last: center;
+    -ms-text-align-last: center;
+    -moz-text-align-last: center; 
+}
+
+select.select-pagination-style:focus {
+    box-shadow: none !important;
+}
+
+select.select-pagination-style option {
+    font-size: 1.0rem;
+}
+
+div.modal-header-style {
+    text-align: center;
+    font-size: 1.5rem;
     padding-top: 25px;
     padding-bottom: 10px;
     border-bottom: 1px solid rgba(225,225,225); 
 }
 
-div.body-modal {
-    margin: 2px;
+div.modal-body-style {
+    text-align: center;
+    font-size: 1.25rem;
     padding-top: 25px;
     padding-bottom: 10px;
     border-bottom: 1px solid rgba(225,225,225);
-    font-weight: bold;
 }
 
-input.modal-input {
+div.modal-body-style div div input {
     border: none;
     width: 35px;
     margin: auto;
     display: block;
+}
+
+div.modal-footer-style {
+    padding: 10px;
+    padding-top: 25px;
+}
+
+div.modal-footer-style div div.modal-footer-right-style {
+    text-align: right;
+}
+
+div.modal-body-style div p.error-style {
+    color: red;
+    font-size: 1.0rem;
+    font-weight: bold;
 }
 
 input::-webkit-outer-spin-button,
@@ -224,26 +290,4 @@ input::-webkit-inner-spin-button {
 
 input[type=number] {
     -moz-appearance:textfield; /* Firefox */
-}
-
-p.error {
-    color: red;
-}
-
-div.display-none {
-    display: none;
-}
-
-div.display-active {
-    display: block;
-}
-
-div.form-check
-{
-  float:left;
-  width:25%;
-}
-
-div.row-center {
-    justify-content: center;
 }

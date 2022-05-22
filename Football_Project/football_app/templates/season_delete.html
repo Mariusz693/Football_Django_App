@@ -2,51 +2,50 @@
 {% load crispy_forms_tags %}
 {% block content %}
 <div class="page-title">
-    <h3>{{ season }}</h3>
+    <div class="row header-style">
+        <div class="col-6">
+            <h3>{{ season }} - opcje</h3>
+        </div>
+        <div class="col-6 header-right-style">
+            <a class="btn btn-dark" href="{% url 'league-info' pk=season.league.pk %}">Wstecz</a>
+        </div>
+    </div>
 </div>
-<div class="card text-center">
-    <div class="card-header">
+<div class="card">
+    <div class="card-header card-header-style">
         <ul class="nav nav-tabs card-header-tabs">
             <li class="nav-item">
-                <a class="nav-link active" href="{% url 'season-delete' pk=season.pk %}">Usuń</a>
+                <a class="nav-link active" href="{% url 'season-delete' pk=season.pk %}">Usuń sezon</a>
             </li>
         </ul>
     </div>
     <div class="card-body">
-        <h5 class="card-title">Usuń sezon</h5>
         <form class="form-control" action="" method="POST">
             {% csrf_token %}
             {% if form.non_field_errors %}
                 {% for error in form.non_field_errors %}
-                    <div class="row row-center">
-                        <div class="col-lg-6 col-md-9 col-sm-12 text">
+                    <div class="row message-style">
+                        <div class="col-lg-6 col-md-9 col-sm-12">
                             <p class="text-danger"><strong>{{ error }}</strong></p>
                         </div>
                     </div>
                 {% endfor %}
             {% endif %}
-            <div class="row row-center">
-                <div class="col-lg-6 col-md-9 col-sm-12 text">
+            <div class="row message-style">
+                <div class="col-lg-6 col-md-9 col-sm-12">
                     <h5>Potwierdź usunięcie sezonu: <b>{{ season }}</b></h5>
                 </div>
             </div>
-            <div class="row row-center">
-                <div class="col-lg-6 col-md-9 col-sm-12 text">
+            <div class="row message-style">
+                <div class="col-lg-6 col-md-9 col-sm-12">
                     <h5>Status: 
-                        <b> {% if season.is_active %} Niezakończony {% else %} Zakończony {% endif %} </b>
+                        <b>{% if season.is_active %} Niezakończony {% else %} Zakończony {% endif %}</b>
                     </h5>
                 </div>
             </div>
-            <div class="row row-center">
-                <div class="col-lg-6 col-md-9 col-sm-12">
-                    <div class="row">
-                        <div class="col-6 button-left">
-                            <input type="submit" class="btn btn-dark" value="Potwierdź">
-                        </div>
-                        <div class="col-6 button-right">
-                            <a class="btn btn-success" href="{% url 'league-info' pk=season.league.pk %}">Anuluj</a>
-                        </div>
-                    </div>
+            <div class="row button-style">
+                <div>
+                    <button type="submit" class="btn btn-dark">Potwierdź</button>
                 </div>
             </div>
         </form>

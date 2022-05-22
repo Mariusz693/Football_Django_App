@@ -1,21 +1,19 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="page-title">
-    <div class="row">
-        <div class="col-6 header-left">
+    <div class="row header-style">
+        <div class="col-6">
             <h3>{{ team }}</h3>
         </div>
-        <div class="col-6 header-right">
-            <h3>sezon 
-                {% if prev %}<a href="{% url 'team-match' pk=team.pk pk_season=prev.pk%}">&laquo;</a>{% endif %}
-                {{ season.season_years }}
-                {% if next %}<a href="{% url 'team-match' pk=team.pk pk_season=next.pk %}">&raquo;</a>{% endif %}
-            </h3>
+        <div class="col-6 header-right-style pagination-style">
+            {% if prev %}<a class="arrow" href="{% url 'team-match' pk=team.pk pk_season=prev.pk%}">&laquo;</a>{% endif %}
+            <a href="{% url 'team-match' pk=team.pk pk_season=season.pk %}">{{ season.season_years }}</a>
+            {% if next %}<a class="arrow" href="{% url 'team-match' pk=team.pk pk_season=next.pk %}">&raquo;</a>{% endif %}
         </div>
     </div>
 </div>
-<div class="card text-center">
-    <div class="card-header">
+<div class="card">
+    <div class="card-header card-header-style">
         <ul class="nav nav-tabs card-header-tabs">
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'team-table' pk=team.pk pk_season=season.pk %}">Tabela ligowa</a>
@@ -29,8 +27,12 @@
         </ul>
     </div>
     <div class="card-body">
-        <h5 class="card-title">Mecze drużyny - <a href="{% url 'season-match' pk=season.pk %}">{{ season }}</a></h5>
-        <table class="table text-center">
+        <div class="row card-center-style">
+            <div class="col-12"> 
+                <a href="{% url 'season-match' pk=season.pk %}">{{ season }}</a>
+            </div>
+        </div>
+        <table class="table table-style text-center">
             <thead>
                 <tr class="d-flex">
                     <th class="col-2">Kolejka</th>
@@ -42,31 +44,31 @@
             </thead>
             <tbody>
                 {% for match in match_list %}
-                <tr class="d-flex">
-                    <td class="col-2">{{ match.match_day }}</td>
-                    <td class="col-3">
-                        {% if match.team_home == team %}
-                        <a href="{% url 'team-match' pk=team.pk pk_season=season.pk %}">{{ match.team_home }}</a>
-                        {% else %}
-                        {{ match.team_home }}
-                        {% endif %}
-                    </td>
-                    <td class="col-2">
-                        {% if match.team_home_goals %}
-                        {{ match.team_home_goals }}:{{ match.team_away_goals }}
-                        {% else %}
-                        -:-
-                        {% endif %}
-                    </td>
-                    <td class="col-3">
-                        {% if match.team_away == team %}
-                        <a href="{% url 'team-match' pk=team.pk pk_season=season.pk %}">{{ match.team_away }}</a>
-                        {% else %}
-                        {{ match.team_away }}
-                        {% endif %}
-                    </td>
-                    <td class="col-2">{{ match.match_day_date|date:"d.m.Y" }}</td>
-                </tr>
+                    <tr class="d-flex">
+                        <td class="col-2">{{ match.match_day }}</td>
+                        <td class="col-3">
+                            {% if match.team_home == team %}
+                                <b>{{ match.team_home }}</b>
+                            {% else %}
+                                {{ match.team_home }}
+                            {% endif %}
+                        </td>
+                        <td class="col-2">
+                            {% if match.team_home_goals %}
+                                {{ match.team_home_goals }}:{{ match.team_away_goals }}
+                            {% else %}
+                                -:-
+                            {% endif %}
+                        </td>
+                        <td class="col-3">
+                            {% if match.team_away == team %}
+                                <b>{{ match.team_away }}</b>
+                            {% else %}
+                                {{ match.team_away }}
+                            {% endif %}
+                        </td>
+                        <td class="col-2">{{ match.match_day_date|date:"d.m.Y" }}</td>
+                    </tr>
                 {% endfor %}
             </tbody>
         </table>

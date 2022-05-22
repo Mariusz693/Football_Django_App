@@ -2,13 +2,20 @@
 {% load crispy_forms_tags %}
 {% block content %}
 <div class="page-title">
-    <h3>Dodaj Ligę</h3>
+    <div class="row header-style">
+        <div class="col-6">
+            <h3>Ligi piłkarskie</h3>
+        </div>
+        <div class="col-6 header-right-style">
+            <a class="btn btn-dark" href="{% url 'league-list' %}">Wstecz</a>
+        </div>
+    </div>
 </div>
-<div class="card text-center">
-    <div class="card-header">
+<div class="card">
+    <div class="card-header card-header-style">
         <ul class="nav nav-tabs card-header-tabs">
             <li class="nav-item">
-                <a class="nav-link active" href="{% url 'league-create' %}">Dodaj Lige</a>
+                <a class="nav-link active" href="{% url 'league-create' %}">Dodaj ligę piłkarską</a>
             </li>
         </ul>
     </div>
@@ -17,8 +24,8 @@
             {% csrf_token %}
             {% if form.non_field_errors %}
                 {% for error in form.non_field_errors %}
-                    <div class="row row-center">
-                        <div class="col-lg-6 col-md-9 col-sm-12 text">
+                    <div class="row message-style">
+                        <div class="col-lg-6 col-md-9 col-sm-12">
                             <p class="text-danger"><strong>{{ error }}</strong></p>
                         </div>
                     </div>
@@ -27,8 +34,8 @@
             {% if messages %}
                 {% for message in messages %}
                 {% if message.level ==  DEFAULT_MESSAGE_LEVELS.SUCCESS %}
-                    <div class="row row-center">
-                        <div class="col-lg-6 col-md-9 col-sm-12 text">
+                    <div class="row message-style">
+                        <div class="col-lg-6 col-md-9 col-sm-12">
                             <p class="text-success">
                                 <strong>Dodano nową ligę - </strong><a href="{% url 'league-info' pk=message.extra_tags %}">{{ message.message }}</a>
                             </p>
@@ -37,31 +44,24 @@
                 {% endif %}
                 {% endfor %}
             {% endif %}
-            <div class="row row-center">
-                <div class="col-lg-6 col-md-9 col-sm-12 input">
+            <div class="row input-style">
+                <div class="col-lg-6 col-md-9 col-sm-12">
                     {{ form.name|as_crispy_field }}
                 </div>
             </div>
-            <div class="row row-center">
-                <div class="col-lg-6 col-md-9 col-sm-12 input">
+            <div class="row input-style">
+                <div class="col-lg-6 col-md-9 col-sm-12">
                     {{ form.country|as_crispy_field }}
                 </div>
             </div>
-            <div class="row row-center">
-                <div class="col-lg-6 col-md-9 col-sm-12 input">
+            <div class="row input-style">
+                <div class="col-lg-6 col-md-9 col-sm-12">
                     {{ form.competition_class|as_crispy_field }}
                 </div>
             </div>
-            <div class="row row-center">
-                <div class="col-lg-6 col-md-9 col-sm-12">
-                    <div class="row">
-                        <div class="col button-left">
-                            <input type="submit" class="btn btn-dark" value="Dodaj">
-                        </div>
-                        <div class="col-6 button-right">
-                            <a href="{% url 'league-list' %}" class="btn btn-dark">Anuluj</a>
-                        </div>
-                    </div>
+            <div class="row button-style">
+                <div>
+                    <button type="submit" class="btn btn-dark">Dodaj</button>
                 </div>
             </div>
         </form>

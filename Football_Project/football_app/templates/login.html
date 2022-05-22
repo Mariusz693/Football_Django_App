@@ -1,12 +1,18 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
-{% load static %}
 {% block content %}
 <div class="page-title">
-    <h3>Aplikacja piłkarska</h3>
+    <div class="row header-style">
+        <div class="col-6">
+            <h3>Aplikacja piłkarska</h3>
+        </div>
+        <div class="col-6 header-right-style">
+            <a class="btn btn-dark" href="{% url 'index' %}">Wstecz</a>
+        </div>
+    </div>
 </div>
-<div class="card text-center">
-    <div class="card-header">
+<div class="card">
+    <div class="card-header card-header-style">
         <ul class="nav nav-tabs card-header-tabs">
             <li class="nav-item">
                 <a class="nav-link active" href="{% url 'login' %}">Zaloguj się</a>
@@ -16,19 +22,19 @@
     <div class="card-body">
         <form class="form-control" action="" method="POST">
             {% csrf_token %}
-            <div class="row">
-                <div class="col-lg-6 col-md-9 col-sm-12 input">
+            <div class="row input-style">
+                <div class="col-lg-6 col-md-9 col-sm-12">
                     {{ form.email|as_crispy_field }}
                 </div>
             </div>
-            <div class="row">
-                <div class="col-lg-6 col-md-9 col-sm-12 input">
+            <div class="row input-style">
+                <div class="col-lg-6 col-md-9 col-sm-12">
                     {{ form.password|as_crispy_field }}
                 </div>
             </div>
-            <div class="row">
-                <div class="col-12 button-left">
-                    <input type="submit" class="btn btn-dark" value="Zaloguj">
+            <div class="row button-style">
+                <div>
+                    <button type="submit" class="btn btn-dark">Zaloguj</button>
                 </div>
             </div>
         </form>

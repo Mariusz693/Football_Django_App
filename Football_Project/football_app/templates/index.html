@@ -2,22 +2,13 @@
 {% load static %}
 {% block content %}
 <div class="page-title">
-    <h3>Aplikacja piłkarska</h3>
-</div>
-<div class="card text-center">
-    <div class="card-header">
-        <ul class="nav nav-tabs card-header-tabs">
-            <li class="nav-item">
-                <a class="nav-link active" href="{% url 'index' %}">Strona domowa</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'league-list' %}">Ligi piłkarskie</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'team-list' %}">Drużyny</a>
-            </li>
-        </ul>
+    <div class="row header-style">
+        <div class="col-12">
+            <h3>Aplikacja piłkarska</h3>
+        </div>
     </div>
+</div>
+<div class="card">
     <div class="card-body">
         <img class="d-block img-thumbnail" src="{% static 'image/index.jpg' %}" alt="Football">
     </div>

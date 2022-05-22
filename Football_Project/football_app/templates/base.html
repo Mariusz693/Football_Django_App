@@ -11,12 +11,12 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-dark bg-dark">
+        <nav class="navbar navbar-dark bg-dark navbar-style">
             <div>
-                <img src="{% static 'image/logo.jpg' %}" class="d-block img-thumbnail" width="50" height="50" alt="">
+                <img src="{% static 'image/logo.jpg' %}" class="d-block img-thumbnail logo-style" alt="">
             </div>
             <div>
-                <a href="{% url 'index' %}" class="navbar-brand main-logo">Football App</a>
+                <a href="{% url 'index' %}" class="navbar-brand main-style">Football App</a>
             </div>
             <div class="col d-flex justify-content-end">
                 {% if request.user.is_authenticated %}
@@ -24,10 +24,7 @@
                     <a href="#" class="navbar-brand dropdown-toggle" id="dropdownMenuLink" data-toggle="dropdown">
                         {{ request.user }}
                     </a>
-                    <div class="dropdown-menu dropdown-menu-right">
-                        <a href="#" class="dropdown-item">Profil</a>
-                        <a href="#" class="dropdown-item">Hasło</a>
-                        <div class="dropdown-divider"></div>
+                    <div class="dropdown-menu dropdown-style">
                         <a href="{% url 'logout' %}" class="dropdown-item">Wyloguj</a>
                     </div>
                 </div>
@@ -38,8 +35,8 @@
         </nav>
     </header>
     <section>
-        <div class="wrapper">
-            <div class="sidebar">
+        <div class="wrapper-style">
+            <div class="sidebar-style">
                 <h3>
                     <a href="{% url 'league-list' %}">Ligi</a>
                 </h3>
@@ -52,7 +49,7 @@
                     {% endfor %}
                 </ul>
             </div>
-            <div class="main-content">
+            <div class="main-content-style">
                 <!-- //--------------------------- page content -------------------------// -->
                 {% block content %}{% endblock content %}
                 <!-- //--------------------------- page content end ---------------------// -->

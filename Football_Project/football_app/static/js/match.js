@@ -1,11 +1,11 @@
 
 function addErrors (error) {
-    const bodyModal = document.querySelector('.body-modal');
+    const bodyModal = document.querySelector('.modal-body-style');
     if (bodyModal.children.length > 2){
         bodyModal.removeChild(bodyModal.lastElementChild);
     }
     const pElement = document.createElement('p');
-    pElement.classList.add('error');
+    pElement.classList.add('error-style');
     pElement.innerText = error;
     const divElement = document.createElement('div');
     divElement.classList.add('row');
@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
     for (let i=0, clickEl, clicksEl = document.querySelectorAll('[data-toggle="modal"]'); clickEl = clicksEl[i]; i++){
         clickEl.onclick = function (e) {
             e.preventDefault();
-            const bodyModal = document.querySelector('.body-modal');
+            const bodyModal = document.querySelector('.modal-body-style');
             if (bodyModal.children.length > 2){
                 bodyModal.removeChild(bodyModal.lastElementChild);
             }

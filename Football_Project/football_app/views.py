@@ -77,6 +77,7 @@ class TeamListView(ListView):
     model = Team
     template_name = "team_list.html"
     context_object_name = "team_list"
+    paginate_by = 10
 
 
 class TeamView(View):
@@ -209,6 +210,7 @@ class LeagueListView(ListView):
     model = League
     template_name = "league_list.html"
     context_object_name = "league_list"
+    paginate_by = 10
 
 
 class LeagueView(View):
@@ -309,8 +311,8 @@ class SeasonCreateView(LoginRequiredMixin, CreateView):
             form.fields["league"].initial = self.league
             form.fields["season_teams"].queryset = teams
             if teams.count() < 10:
-                form.errors.update({NON_FIELD_ERRORS: ("Za mało wolnych drużyn w kraju do stworzenia ligi, min. 10",)})
-        
+                form.errors.update({NON_FIELD_ERRORS: ("Za mało drużyn w kraju do stworzenia ligi, min. 10",)})
+                self.form_visible = False
         return form
 
     def get_context_data(self, *args, **kwargs):

@@ -1,14 +1,23 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="page-title">
-    <div class="row">
-        <div class="col-6 header-left">
+    <div class="row header-style">
+        {% if request.user.is_authenticated %}
+        <div class="col-6">
             <h3>{{ team }}</h3>
         </div>
+        <div class="col-6 header-right-style">
+            <a class="btn btn-dark" href="{% url 'team-update' pk=team.pk %}">Opcje</a>
+        </div>
+        {% else %}
+        <div class="col-12">
+            <h3>{{ team }}</h3>
+        </div>
+        {% endif %}
     </div>
 </div>
-<div class="card text-center">
-    <div class="card-header">
+<div class="card">
+    <div class="card-header card-header-style">
         <ul class="nav nav-tabs card-header-tabs">
             {% if team.seasons.first %}
             <li class="nav-item">
@@ -24,56 +33,44 @@
         </ul>
     </div>
     <div class="card-body">
-        <h5 class="card-title">Informacje</h5>
-        <div class="list">
-            <ul>
-                <li>Nazwa: <b>{{ team }}</b></li>
-                <li>Kraj: <b>{{ team.country.name }}</b></li>
-                <li>
-                    Obecne rozgrywki: 
-                    <b>{% if team.seasons.first.is_active %} {{ team.seasons.first }} {% else %} ----- {% endif %}</b>
-                </li>
-            </ul>
-        </div>
-        {% if request.user.is_authenticated %}
-        <div class="row">
-            <div class="col-6 button-left">
-                <a class="btn btn-dark" href="{% url 'team-update' pk=team.pk %}">Edytuj</a>
-            </div>
-            <div class="col-6 button-right">
-                <a class="btn btn-danger" href="{% url 'team-delete' pk=team.pk %}">Usuń</a>
-            </div>
-        </div>
+        <h5>Informacje</h5>
+        <ul class="list-style">
+            <li>Kraj: <b>{{ team.country.name }}</b></li>
+            <li>Obecne rozgrywki: 
+                <b>{% if team.seasons.first.is_active %} {{ team.seasons.first }} {% else %} ----- {% endif %}</b>
+            </li>
+        </ul>
+        {% if team.seasons.first %}
+            <h5>Rozegrane sezony</h5>
+            <table class="table table-style">
+                <thead>
+                    <tr class="d-flex">
+                        <th class="col-4">Sezon</th>
+                        <th class="col-3 text-center">Data rozpoczęcia</th>
+                        <th class="col-3 text-center">Data zakończenia</th>
+                        <th class="col-2 text-center">Trwa</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for season in team.seasons.all %}
+                        <tr class="d-flex">
+                            <td class="col-4">
+                                <a href="{% url 'team-table' pk=team.pk pk_season=season.pk %}">{{ season }}</a>
+                            </td>
+                            <td class="col-3 text-center">{{ season.date_start|date:"d.m.Y" }}</td>
+                            <td class="col-3 text-center">{{ season.date_end|date:"d.m.Y" }}</td>
+                            <td class="col-2 text-center">
+                                {% if season.is_active %}
+                                    &#10003;
+                                {% else %}
+                                    &#10007;
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         {% endif %}
-        <h5 class="card-title">Rozegrane sezony</h5>
-        <table class="table text-center">
-            <thead>
-                <tr class="d-flex">
-                    <th class="col-4">Sezon</th>
-                    <th class="col-3">Data rozpoczęcia</th>
-                    <th class="col-3">Data zakończenia</th>
-                    <th class="col-2">Aktywny</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for season in team.seasons.all %}
-                <tr class="d-flex">
-                    <td class="col-4">
-                        <a href="{% url 'team-table' pk=team.pk pk_season=season.pk %}">{{ season }}</a>
-                    </td>
-                    <td class="col-3">{{ season.date_start|date:"d.m.Y" }}</td>
-                    <td class="col-3">{{ season.date_end|date:"d.m.Y" }}</td>
-                    <td class="col-2">
-                        {% if season.is_active %}
-                        &#10003;
-                        {% else %}
-                        &#10007;
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
     </div>
 </div>
 {% endblock %}

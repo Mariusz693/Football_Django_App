@@ -2,27 +2,25 @@
 {% load static %}
 {% block content %}
 <div class="page-title">
-    <div class="row">
-        <div class="col-6 header-left">
+    <div class="row header-style">
+        <div class="col-6">
             <h3>{{ season.league }}</h3>
         </div>
-        <div class="col-6 header-right">
-            <h3>sezon 
-                {% if prev %}<a href="{% url 'season-match' pk=prev.pk %}">&laquo;</a>{% endif %}
-                {{ season.season_years }}
-                {% if next %}<a href="{% url 'season-match' pk=next.pk %}">&raquo;</a>{% endif %}
-            </h3>
+        <div class="col-6 header-right-style pagination-style">
+            {% if prev %}<a class="arrow" href="{% url 'season-match' pk=prev.pk %}">&laquo;</a>{% endif %}
+            <a href="{% url 'season-match' pk=season.pk %}">{{ season.season_years }}</a>
+            {% if next %}<a class="arrow" href="{% url 'season-match' pk=next.pk %}">&raquo;</a>{% endif %}
         </div>
     </div>
 </div>
-<div class="card text-center">
-    <div class="card-header">
+<div class="card">
+    <div class="card-header card-header-style">
         <ul class="nav nav-tabs card-header-tabs">
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'season-table' pk=season.pk %}">Tabela</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link active" href="{% url 'season-match' pk=season.pk %}">Kolejki</a>
+                <a class="nav-link active" href="{% url 'season-match' pk=season.pk %}">Mecze</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'league-info' pk=season.league.pk %}">Liga</a>
@@ -30,107 +28,143 @@
         </ul>
     </div>
     <div class="card-body">
-        <h5 class="card-title">Wszystkie kolejki</h5>
-        <div class="row pagination-row">
-            <div class="col-4">
-                <h5 class="pagination-header">Kolejka</h5>
-            </div>
-            {% if is_paginated %}
-            <div class="col-4">
-                <ul class="pagination justify-content-center">
+        {% if is_paginated %}
+            <div class="row card-center-style">
+                <div class="col-4">
+                    <select name="form" class="form-control select-pagination-style" onchange="location = this.value;"> 
+                        {% for i in page_obj.paginator.page_range %}
+                        <option value="?page={{ i }}" {% if i == page_obj.number %} selected {% endif %}>Kolejka {{ i }}</option>
+                        {% endfor %} 
+                    </select>
+                </div>
+                <div class="col-4 pagination-style">
                     {% if page_obj.number > 1 %}
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ page_obj.number|add:'-1' }}{% if message %}&search={{ message }}{% endif %}">&laquo;</a>
-                        </li>
+                        <a class="arrow" href="?page={{ page_obj.number|add:'-1' }}">&laquo;</a>
                     {% endif %}
                     {% if page_obj.paginator.num_pages <= 1 %}
                         {{ pass }}
                     {% else %}
                         {% for i in page_obj.paginator.page_range %}
                             {% if page_obj.number == i %}
-                                <li class="page-item active" aria-current="page">
-                                    <span class="page-link">{{ i }}</span>
-                                </li>
-                            {% elif i > page_obj.number|add:'-3' and i < page_obj.number|add:'3' %}
-                                <li class="page-item"><a class="page-link" href="?page={{ i }}{% if message %}&search={{ message }}{% endif %}">{{ i }}</a></li>
+                                <a class="active" href="?page={{ i }}">{{ i }}</a>
+                            {% elif i > page_obj.number|add:'-2' and i < page_obj.number|add:'2' %}
+                                <a href="?page={{ i }}">{{ i }}</a>
                             {% endif %}
                         {% endfor %}
                     {% endif %}
                     {% if page_obj.paginator.num_pages > page_obj.number %}
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ page_obj.number|add:'1' }}{% if message %}&search={{ message }}{% endif %}">&raquo;</a>
-                        </li>
+                        <a class="arrow" href="?page={{ page_obj.number|add:'1' }}">&raquo;</a>
                     {% endif %}
-                </ul>
+                </div>
+                <div class="col-4">
+                    <span>{{ match_list.0.match_day_date|date:"d.m.Y" }}<span>
+                </div>
             </div>
-            {% endif %}
-            <div class="col-4">
-                <h5 class="pagination-header">{{ match_list.0.match_day_date|date:"d.m.Y" }}</h5>
+            <table class="table table-style text-center">
+                <thead>
+                    <tr class="d-flex">
+                        <th class="col-4">Gospodarz</th>
+                        <th class="col-4">Wynik</th>
+                        <th class="col-4">Gość</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for match in match_list %}
+                        <tr class="d-flex">
+                            <td class="col-4">
+                                <a href="{% url 'team-match' pk=match.team_home.pk pk_season=season.pk %}">{{ match.team_home }}</a>
+                            </td>
+                            <td class="col-4">
+                                {% if match.team_home_goals != None %}
+                                    {{ match.team_home_goals }}:{{ match.team_away_goals }}
+                                {% elif request.user.is_authenticated %}
+                                    <a href="" data-toggle="modal" data-target="#exampleModal" data-url="{% url 'add-goals' %}"
+                                        data-team_home="{{match.team_home}}" data-team_away="{{match.team_away}}" data-id="{{match.id}}">-:-</a>
+                                {% else %}
+                                    -:-
+                                {% endif %}
+                            </td>
+                            <td class="col-4">
+                                <a href="{% url 'team-match' pk=match.team_away.pk pk_season=season.pk %}">{{ match.team_away }}</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="row card-center-style">
+                <div class="col-12"> 
+                    <span>Wszystkie mecze</span>
+                </div>
             </div>
-        </div>
-        <table class="table text-center">
-            <thead>
-                <tr class="d-flex">
-                    <th class="col-4">Gospodarz</th>
-                    <th class="col-4">Wynik</th>
-                    <th class="col-4">Gość</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for match in match_list %}
-                <tr class="d-flex">
-                    <td class="col-4">
-                        <a href="{% url 'team-match' pk=match.team_home.pk pk_season=season.pk %}">{{ match.team_home }}</a>
-                    </td>
-                    <td class="col-4">
-                        {% if match.team_home_goals != None %}
-                        {{ match.team_home_goals }}:{{ match.team_away_goals }}
-                        {% elif request.user.is_authenticated %}
-                        <a href="" data-toggle="modal" data-target="#exampleModal" data-url="{% url 'add-goals' %}"
-                            data-team_home="{{match.team_home}}" data-team_away="{{match.team_away}}" data-id="{{match.id}}">-:-</a>
-                        {% else %}
-                        -:-
-                        {% endif %}
-                    </td>
-                    <td class="col-4">
-                        <a href="{% url 'team-match' pk=match.team_away.pk pk_season=season.pk %}">{{ match.team_away }}</a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+            <table class="table table-style text-center">
+                <thead>
+                    <tr class="d-flex">
+                        <th class="col-2">Kolejka</th>
+                        <th class="col-3">Gospodarz</th>
+                        <th class="col-2">Wynik</th>
+                        <th class="col-3">Gość</th>
+                        <th class="col-2">Data</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for match in match_list %}
+                        <tr class="d-flex">
+                            <td class="col-2">{{ match.match_day }}</td>
+                            <td class="col-3">
+                                <a href="{% url 'team-match' pk=match.team_home.pk pk_season=season.pk %}">{{ match.team_home }}</a>
+                            </td>
+                            <td class="col-2">
+                                {% if match.team_home_goals != None %}
+                                    {{ match.team_home_goals }}:{{ match.team_away_goals }}
+                                {% elif request.user.is_authenticated %}
+                                    <a href="" data-toggle="modal" data-target="#exampleModal" data-url="{% url 'add-goals' %}"
+                                        data-team_home="{{match.team_home}}" data-team_away="{{match.team_away}}" data-id="{{match.id}}">-:-</a>
+                                {% else %}
+                                    -:-
+                                {% endif %}
+                            </td>
+                            <td class="col-3">
+                                <a href="{% url 'team-match' pk=match.team_away.pk pk_season=season.pk %}">{{ match.team_away }}</a>
+                            </td>
+                            <td class="col-2">{{ match.match_day_date|date:"d.m.Y" }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
     </div>
     <div class="modal" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" 
         aria-hidden="true">
         <div class="modal-dialog" role="document">
-            <div id="modal-content" class="modal-content">
+            <div id="modal-content" class="modal-content modal-style">
                 <form>
-                    <div class="header-modal">
-                        <h5>Wpisz wynik meczu</h5>
+                    <div class="modal-header-style">
+                        <span>Wpisz wynik meczu</span>
                     </div>
-                    <div class="body-modal">
+                    <div class="modal-body-style">
                         <div class="row">
                             <div class="col-5"></div>
                             <div class="col-2"></div>
                             <div class="col-5"></div>
                         </div>
-                        <div class="form-group row">
+                        <div class="row">
                             <div class="col-5">
-                                <input type="number" class="form-control modal-input" required step="1" min="0" max="9" placeholder="-"/>
+                                <input type="number" class="form-control" required step="1" min="0" max="9" placeholder="-"/>
                             </div>
                             <div class="col-2">:</div>
                             <div class="col-5">
-                                <input type="number" class="form-control modal-input" required step="1" min="0" max="9" placeholder="-">
+                                <input type="number" class="form-control" required step="1" min="0" max="9" placeholder="-">
                             </div>
                         </div>
                     </div>
-                    <div class="footer-modal">
+                    <div class="modal-footer-style">
                         <div class="row">
-                            <div class="col-6 button-left">
-                                <input type="submit" class="btn btn-dark" value="Zapisz"/>
-                            </div>
-                            <div class="col-6 button-right">
+                            <div class="col-6">
                                 <input type="button" class="btn btn-dark" data-dismiss="modal" value="Anuluj">
+                            </div>
+                            <div class="col-6 modal-footer-right-style">
+                                <input type="submit" class="btn btn-dark" value="Zapisz"/>
                             </div>
                         </div>
                     </div>
