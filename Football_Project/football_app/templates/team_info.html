@@ -35,7 +35,7 @@
     <div class="card-body">
         <h5>Informacje</h5>
         <ul class="list-style">
-            <li>Kraj: <b>{{ team.country.name }}</b></li>
+            <li>Państwo: <b>{{ team.country.name }}</b></li>
             <li>Obecne rozgrywki: 
                 <b>{% if team.seasons.first.is_active %} {{ team.seasons.first }} {% else %} ----- {% endif %}</b>
             </li>

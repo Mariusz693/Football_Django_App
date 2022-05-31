@@ -31,9 +31,9 @@
         {% if is_paginated %}
             <div class="row card-center-style">
                 <div class="col-4">
-                    <select name="form" class="form-control select-pagination-style" onchange="location = this.value;"> 
+                    <select class="select-pagination-style" onchange="location = this.value;"> 
                         {% for i in page_obj.paginator.page_range %}
-                        <option value="?page={{ i }}" {% if i == page_obj.number %} selected {% endif %}>Kolejka {{ i }}</option>
+                            <option value="?page={{ i }}" {% if i == page_obj.number %} selected {% endif %}>Kolejka {{ i }}</option>
                         {% endfor %} 
                     </select>
                 </div>

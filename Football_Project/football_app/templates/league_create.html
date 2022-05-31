@@ -33,15 +33,15 @@
             {% endif %}
             {% if messages %}
                 {% for message in messages %}
-                {% if message.level ==  DEFAULT_MESSAGE_LEVELS.SUCCESS %}
-                    <div class="row message-style">
-                        <div class="col-lg-6 col-md-9 col-sm-12">
-                            <p class="text-success">
-                                <strong>Dodano nową ligę - </strong><a href="{% url 'league-info' pk=message.extra_tags %}">{{ message.message }}</a>
-                            </p>
+                    {% if message.level ==  DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                        <div class="row message-style">
+                            <div class="col-lg-6 col-md-9 col-sm-12">
+                                <p class="text-success">
+                                    <strong>Dodano nową ligę - </strong><a href="{% url 'league-info' pk=message.extra_tags %}">{{ message.message }}</a>
+                                </p>
+                            </div>
                         </div>
-                    </div>
-                {% endif %}
+                    {% endif %}
                 {% endfor %}
             {% endif %}
             <div class="row input-style">

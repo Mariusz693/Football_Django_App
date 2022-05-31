@@ -1,8 +1,7 @@
 from django import forms
 from django.contrib.auth import authenticate
-from django.core.exceptions import NON_FIELD_ERRORS
 
-from .models import Season, Team, User
+from .models import Season, User
 
 
 class DateInput(forms.DateInput):
@@ -50,6 +49,3 @@ class SeasonCreateForm(forms.ModelForm):
             "date_start": DateInput(),
             "season_teams": forms.CheckboxSelectMultiple(),
         }
-        # labels = {
-        #     "season_teams": "Drużyny, wybrano -/-",
-        # }

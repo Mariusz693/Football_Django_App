@@ -1,5 +1,4 @@
 import json
-from urllib import request
 from django.forms import ValidationError
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import View, FormView, ListView, CreateView, UpdateView, DetailView, DeleteView
@@ -78,6 +77,34 @@ class TeamListView(ListView):
     template_name = "team_list.html"
     context_object_name = "team_list"
     paginate_by = 10
+
+    def get_queryset(self):
+
+        team_list = Team.objects.all()
+        self.country_list = []
+        for team in team_list:
+            if not team.country in self.country_list:
+                self.country_list.append(team.country)
+        
+        self.search = self.request.GET.get("search")
+        self.country = self.request.GET.get("country")
+        
+        if self.search:
+            return team_list.filter(name__istartswith=self.search)
+        
+        if self.country:
+            return team_list.filter(country=self.country)
+    
+        return team_list
+
+    def get_context_data(self, *args, **kwargs):
+        
+        context = super().get_context_data(*args, **kwargs)
+        context["country_list"] = self.country_list
+        context["search"] = self.search
+        context["country"] = self.country
+        
+        return context
 
 
 class TeamView(View):
@@ -211,6 +238,34 @@ class LeagueListView(ListView):
     template_name = "league_list.html"
     context_object_name = "league_list"
     paginate_by = 10
+
+    def get_queryset(self):
+
+        league_list = League.objects.all()
+        self.country_list = []
+        for league in league_list:
+            if not league.country in self.country_list:
+                self.country_list.append(league.country)
+        
+        self.search = self.request.GET.get("search")
+        self.country = self.request.GET.get("country")
+        
+        if self.search:
+            return league_list.filter(name__icontains=self.search)
+        
+        if self.country:
+            return league_list.filter(country=self.country)
+    
+        return league_list
+
+    def get_context_data(self, *args, **kwargs):
+        
+        context = super().get_context_data(*args, **kwargs)
+        context["country_list"] = self.country_list
+        context["search"] = self.search
+        context["country"] = self.country
+        
+        return context
 
 
 class LeagueView(View):
@@ -347,7 +402,7 @@ class SeasonCreateView(LoginRequiredMixin, CreateView):
 
 class SeasonDeleteView(LoginRequiredMixin, DeleteView):
     """
-    Return the delete league form view
+    Return the delete season form view
     """
     model = Season
     template_name = "season_delete.html"
@@ -365,7 +420,7 @@ class SeasonDeleteView(LoginRequiredMixin, DeleteView):
 
 class SeasonTableView(DetailView):
     """
-    Return a season table
+    Return a season table view
     """
     model = Season
     template_name = "season_table.html"
@@ -388,7 +443,7 @@ class SeasonTableView(DetailView):
 
 class SeasonMatchView(ListView):
     """
-    Return a seasons match
+    Return a seasons match view
     """
     model = Game
     template_name = "season_match.html"
@@ -419,7 +474,9 @@ class SeasonMatchView(ListView):
 
 @method_decorator(csrf_exempt, name='dispatch')
 class AddGoalsView(View):
-    
+    """
+    Add points to match view
+    """
     def post(self, request):
 
         data = json.loads(request.body.decode())

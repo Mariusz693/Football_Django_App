@@ -35,7 +35,7 @@
     <div class="card-body">
         <h5>Informacje</h5>
         <ul class="list-style">
-            <li>Kraj: <b>{{ league.country.name }}</b></li>
+            <li>Państwo: <b>{{ league.country.name }}</b></li>
             <li>Poziom rozgrywek: <b>{{ league.competition_class }} klasa</b></li>
             <li>Aktualny sezon: 
                 <b>{% if league.seasons.first.is_active %}{{ league.seasons.first.season_years }}{% else %}-----{% endif %}</b>

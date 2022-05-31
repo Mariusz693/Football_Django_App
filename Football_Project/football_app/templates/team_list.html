@@ -9,21 +9,21 @@
             </div>
             <div class="col-6 header-right-style pagination-style">
                 {% if page_obj.number > 1 %}
-                    <a class="arrow" href="?page={{ page_obj.number|add:'-1' }}">&laquo;</a>
+                    <a class="arrow" href="?page={{ page_obj.number|add:'-1' }}{% if search %}&search={{ search }}{% elif country %}&country={{ country }}{% endif %}">&laquo;</a>
                 {% endif %}
                 {% if page_obj.paginator.num_pages <= 1 %}
                     {{ pass }}
                 {% else %}
                     {% for i in page_obj.paginator.page_range %}
                         {% if page_obj.number == i %}
-                            <a class="active" href="?page={{ i }}">{{ i }}</a>
+                            <a class="active" href="?page={{ i }}{% if search %}&search={{ search }}{% elif country %}&country={{ country }}{% endif %}">{{ i }}</a>
                         {% elif i > page_obj.number|add:'-3' and i < page_obj.number|add:'3' %}
-                            <a href="?page={{ i }}">{{ i }}</a>
+                            <a href="?page={{ i }}{% if search %}&search={{ search }}{% elif country %}&country={{ country }}{% endif %}">{{ i }}</a>
                         {% endif %}
                     {% endfor %}
                 {% endif %}
                 {% if page_obj.paginator.num_pages > page_obj.number %}
-                    <a class="arrow" href="?page={{ page_obj.number|add:'1' }}">&raquo;</a>               
+                    <a class="arrow" href="?page={{ page_obj.number|add:'1' }}{% if search %}&search={{ search }}{% elif country %}&country={{ country }}{% endif %}">&raquo;</a>
                 {% endif %}
             </div>
         {% else %}
@@ -35,35 +35,47 @@
 </div>
 <div class="card">
     <div class="card-header card-header-style">
-        <div class="search-style">
-            <form action="" method="GET">
-                <input type="search" name="search" id="search" placeholder="Szukaj">
-                <button type="submit">
-                    <img src="{% static 'image/search.png' %}" alt="Szukaj">
-                </button>
-            </form>
-            {% if request.user.is_authenticated %}
-                <a class="btn btn-dark" href="{% url 'team-create' %}">Dodaj</a>
-            {% endif %}
+        <div class="card-header-search-style">
+            <div>
+                {% if country_list %}
+                    <select name="form" onchange="location = this.value;">
+                        <option value="?page=1&country=">Wszystkie państwa</option>
+                        {% for item in country_list %}
+                            <option value="?page=1&country={{ item }}" {% if item == country %} selected {% endif %}>{{ item.name }}</option>
+                        {% endfor %} 
+                    </select>
+                {% endif %}
+            </div>
+            <div>
+                <form action="" method="GET">
+                    <input type="search" name="search" placeholder="Szukaj" {% if search %} value="{{ search }}" {% endif %}>
+                    <button type="submit">
+                        <img src="{% static 'image/search.png' %}" alt="Szukaj">
+                    </button>
+                </form>
+                {% if request.user.is_authenticated %}
+                    <a class="btn btn-dark" href="{% url 'team-create' %}">Dodaj</a>
+                {% endif %}
+            </div>
         </div>
     </div>
     <div class="card-body">
         <table class="table table-style">
             <thead>
                 <tr class="d-flex">
-                    <th class="col-6">Nazwa</th>
-                    <th class="col-3 text-center">Kraj</th>
-                    <th class="col-3 text-center">Rozgrywki</th>
+                    <th class="col-4">Nazwa</th>
+                    <th class="col-4 text-center">Państwo</th>
+                    <th class="col-4 text-center">Rozgrywki</th>
                 </tr>
             </thead>
             <tbody>
                 {% for team in team_list %}
                     <tr class="d-flex">
-                        <td class="col-6">
+                        <td class="col-4">
                             <a href="{% url 'team' pk=team.pk %}">{{ team.name }}</a>
                         </td>
-                        <td class="col-3 text-center">{{ team.country.name }}</td>
-                        <td class="col-3 text-center">
+                        <td class="col-4 text-center">{{ team.country.name }}</td>
+                        <td class="col-4 text-center">
                             {% if team.seasons.first.is_active %}
                                 <a href="{% url 'season-table' pk=team.seasons.first.pk %}">{{ team.seasons.first.league }}</a>
                             {% else %}

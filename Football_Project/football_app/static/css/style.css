@@ -1,14 +1,33 @@
 
 *{
-    margin: 0;
-    padding: 0;
+    margin: 0px;
+    padding: 0px;
     box-sizing: border-box;
     scrollbar-width: none;
 }
 
-body {
+html, body {
     background: #f3f5f9;
     font-family: serif;
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+}
+
+div.container-style {
+    min-height: 100%;
+    height: auto !important;
+    height: 100%;
+    margin-bottom: -55px;
+}
+
+div.container-style section {
+    margin: 2px;
+}
+
+div.footer-push-style, div.footer-style {
+    clear: both;
+    height: 56px;
 }
 
 h3 {
@@ -42,7 +61,6 @@ div.dropdown-style {
 div.wrapper-style {
     display: flex;
     position: relative;
-    margin-bottom: 55px;
 }
 
 div.sidebar-style {
@@ -129,23 +147,28 @@ div.card-header-style ul li a.active {
     height: 47px;
 }
 
-div.search-style {
+div.card-header-search-style {
     display: flex;
-    justify-content: end;
+    justify-content: space-between;
     margin-right: -6px;
+    margin-left: -6px;
 }
 
-div.search-style a {
-    margin-left: 10px;
-}
-
-div.search-style form {
+div.card-header-search-style div {
     display: flex;
     flex-direction: row;
 }
 
-div.search-style form input {
-    width: 100%;
+div.card-header-search-style div select {
+    width: 200px;
+    height: 40px;
+    border: 1px solid grey;
+    background-color: white;
+    border-radius: 5px;
+}
+
+div.card-header-search-style div form input {
+    width: 200px;
     padding: 6px;
     height: 40px;
     border: 1px solid grey;
@@ -154,17 +177,21 @@ div.search-style form input {
     outline: none;
 }
 
-div.search-style form button {
+div.card-header-search-style div form button {
     background: transparent;
     border: none;
     outline: none;
     margin-left: -33px;
 }
 
-div.search-style form button img {
+div.card-header-search-style div form button img {
     width: 20px;
     height: 20px;
     object-fit: cover;
+}
+
+div.card-header-search-style div a {
+    margin-left: 10px;
 }
 
 table.table-style {
@@ -228,19 +255,28 @@ div.card-center-style div a {
 }
 
 select.select-pagination-style {
-    border: none;
     font-size: 1.25rem;
+    background-color: white;
     text-align-last: center;
     -ms-text-align-last: center;
-    -moz-text-align-last: center; 
-}
-
-select.select-pagination-style:focus {
-    box-shadow: none !important;
+    -moz-text-align-last: center;
+    padding: 5px 10px;
+    border: 1px solid grey;
+    border-radius: 5px;
 }
 
 select.select-pagination-style option {
     font-size: 1.0rem;
+}
+
+select.select-table-style {
+    border: none;
+    font-weight: bold;
+    background-color: white;
+    text-align-last: center;
+    -ms-text-align-last: center;
+    -moz-text-align-last: center; 
+    
 }
 
 div.modal-header-style {

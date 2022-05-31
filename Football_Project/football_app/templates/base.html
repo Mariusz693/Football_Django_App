@@ -10,55 +10,58 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-dark bg-dark navbar-style">
-            <div>
-                <img src="{% static 'image/logo.jpg' %}" class="d-block img-thumbnail logo-style" alt="">
-            </div>
-            <div>
-                <a href="{% url 'index' %}" class="navbar-brand main-style">Football App</a>
-            </div>
-            <div class="col d-flex justify-content-end">
-                {% if request.user.is_authenticated %}
-                <div class="dropdown show">
-                    <a href="#" class="navbar-brand dropdown-toggle" id="dropdownMenuLink" data-toggle="dropdown">
-                        {{ request.user }}
-                    </a>
-                    <div class="dropdown-menu dropdown-style">
-                        <a href="{% url 'logout' %}" class="dropdown-item">Wyloguj</a>
-                    </div>
+    <div class="container-style">
+        <header>
+            <nav class="navbar navbar-dark bg-dark navbar-style">
+                <div>
+                    <img src="{% static 'image/logo.jpg' %}" class="d-block img-thumbnail logo-style" alt="">
                 </div>
-                {% else %}
-                <a href="{% url 'login' %}" class="navbar-brand">Zaloguj</a>
-                {% endif  %}
+                <div>
+                    <a href="{% url 'index' %}" class="navbar-brand main-style">Football App</a>
+                </div>
+                <div class="col d-flex justify-content-end">
+                    {% if request.user.is_authenticated %}
+                    <div class="dropdown show">
+                        <a href="#" class="navbar-brand dropdown-toggle" id="dropdownMenuLink" data-toggle="dropdown">
+                            {{ request.user }}
+                        </a>
+                        <div class="dropdown-menu dropdown-style">
+                            <a href="{% url 'logout' %}" class="dropdown-item">Wyloguj</a>
+                        </div>
+                    </div>
+                    {% else %}
+                    <a href="{% url 'login' %}" class="navbar-brand">Zaloguj</a>
+                    {% endif  %}
+                </div>
+            </nav>
+        </header>
+        <section>
+            <div class="wrapper-style">
+                <div class="sidebar-style">
+                    <h3>
+                        <a href="{% url 'league-list' %}">Ligi</a>
+                    </h3>
+                    <h3>
+                        <a href="{% url 'team-list' %}">Drużyny</a>
+                    </h3>
+                    <ul>
+                        {% for league in leagues %}
+                        <li><a href="{% url 'league' pk=league.pk %}">{{ league }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="main-content-style">
+                    <!-- //--------------------------- page content -------------------------// -->
+                    {% block content %}{% endblock content %}
+                    <!-- //--------------------------- page content end ---------------------// -->
+                </div>
             </div>
-        </nav>
-    </header>
-    <section>
-        <div class="wrapper-style">
-            <div class="sidebar-style">
-                <h3>
-                    <a href="{% url 'league-list' %}">Ligi</a>
-                </h3>
-                <h3>
-                    <a href="{% url 'team-list' %}">Drużyny</a>
-                </h3>
-                <ul>
-                    {% for league in leagues %}
-                    <li><a href="{% url 'league' pk=league.pk %}">{{ league }}</a></li>
-                    {% endfor %}
-                </ul>
-            </div>
-            <div class="main-content-style">
-                <!-- //--------------------------- page content -------------------------// -->
-                {% block content %}{% endblock content %}
-                <!-- //--------------------------- page content end ---------------------// -->
-            </div>
-        </div>
-    </section>
-    <footer class="text-center text-white fixed-bottom bg-dark">
+        </section>
+        <div class="footer-push-style"></div>
+    </div>
+    <div class="footer-style text-center text-white  bg-dark">
         <div class="text-center p-3">© 2022 Copyright: Mariusz Kuleta</div>
-    </footer>
+    </div>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>

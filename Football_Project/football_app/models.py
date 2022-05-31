@@ -1,25 +1,37 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django_countries.fields import CountryField
+from django_countries import Countries
 
 from .managers import CustomUserManager
 from .validators import validate_teams_count, validate_competition_class
 
 # Create your models here.
 
+class EuropeCountries(Countries):
+    only = [
+        "AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR", "HU", "IE", "IT", "LV",
+        "LT", "LU", "MT", "NL", "PL", "PT", "RO", "SK", "SI", "ES", "SE", "AL", "AD", "AM", "BY", "BA",
+        "FO", "GE", "GI", "IS", "LI", "MK", "MD", "ME", "NO", "RU", "SM", "RS", "CH", "TR", "UA",
+        ("EE", ("Anglia")),
+        ("SS", ("Szkocja")),
+        ("WW", ("Walia")),
+        ("II", ("Irlandia Północna")),
+    ]
+
 
 class User(AbstractUser):
 
     class Meta:
-            verbose_name = 'Użytkownik'
-            verbose_name_plural = 'Użytkownicy'
+            verbose_name = "Użytkownik"
+            verbose_name_plural = "Użytkownicy"
 
     username = None
-    first_name = models.CharField(verbose_name='Imię', max_length=64)
-    last_name = models.CharField(verbose_name='Nazwisko', max_length=64)
-    email = models.EmailField(verbose_name='Email', max_length=255, unique=True)
+    first_name = models.CharField(verbose_name="Imię", max_length=64)
+    last_name = models.CharField(verbose_name="Nazwisko", max_length=64)
+    email = models.EmailField(verbose_name="Email", max_length=255, unique=True)
 
-    USERNAME_FIELD = 'email'
+    USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
 
     objects = CustomUserManager()
@@ -37,8 +49,8 @@ class League(models.Model):
         ordering = ["competition_class", "name"]
 
     name = models.CharField(max_length=128, verbose_name="Nazwa ligi")
-    country = CountryField(blank_label="Wybierz z listy", verbose_name="Kraj rozgrywek")
-    competition_class = models.PositiveSmallIntegerField(validators=[validate_competition_class], verbose_name="Klasa rozrywek")
+    country = CountryField(blank_label="Wybierz z listy", verbose_name="Kraj rozgrywek", countries=EuropeCountries)
+    competition_class = models.PositiveSmallIntegerField(validators=[validate_competition_class], verbose_name="Poziom rozrywek")
     
     def __str__(self):
         return self.name
@@ -60,7 +72,7 @@ class Team(models.Model):
         ordering = ["name"]
 
     name = models.CharField(max_length=128, unique=True, error_messages={"unique": "Istnieje już drużyna o tej nazwie"}, verbose_name="Nazwa drużyny")
-    country = CountryField(blank_label="Wybierz z listy", verbose_name="Kraj rozgrywek")       
+    country = CountryField(blank_label="Wybierz z listy", verbose_name="Kraj rozgrywek", countries=EuropeCountries)       
     team_seasons = models.ManyToManyField('Season', related_name='teams', through='SeasonTeam', verbose_name="Sezony")
 
     def __str__(self):
