@@ -82,6 +82,7 @@ class TeamListView(ListView):
 
         team_list = Team.objects.all()
         self.country_list = []
+        
         for team in team_list:
             if not team.country in self.country_list:
                 self.country_list.append(team.country)
@@ -90,9 +91,11 @@ class TeamListView(ListView):
         self.country = self.request.GET.get("country")
         
         if self.search:
+            
             return team_list.filter(name__istartswith=self.search)
         
         if self.country:
+            
             return team_list.filter(country=self.country)
     
         return team_list
@@ -112,10 +115,15 @@ class TeamView(View):
     Return a team info or team table view
     """
     def get(self, request, pk):
+        
         team = Team.objects.get(pk=pk)
+        
         if team.seasons.first():
+        
             return redirect(reverse_lazy("team-table", args=(team.pk, team.seasons.first().pk,)))
+        
         else:
+        
             return redirect(reverse_lazy("team-info", args=(team.pk,)))
 
 
@@ -138,6 +146,7 @@ class TeamCreateView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy("team-create")
         
     def form_valid(self, form):
+        
         self.object = form.save()
         messages.success(self.request, message=self.object.name, extra_tags=self.object.pk)
         
@@ -243,6 +252,7 @@ class LeagueListView(ListView):
 
         league_list = League.objects.all()
         self.country_list = []
+        
         for league in league_list:
             if not league.country in self.country_list:
                 self.country_list.append(league.country)
@@ -251,9 +261,11 @@ class LeagueListView(ListView):
         self.country = self.request.GET.get("country")
         
         if self.search:
+        
             return league_list.filter(name__icontains=self.search)
         
         if self.country:
+        
             return league_list.filter(country=self.country)
     
         return league_list
@@ -273,10 +285,15 @@ class LeagueView(View):
     Return a league info or league table view
     """
     def get(self, request, pk):
+        
         league = League.objects.get(pk=pk)
+        
         if league.seasons.first():
+        
             return redirect(reverse_lazy("season-table", args=(league.seasons.first().pk,)))
+        
         else:
+        
             return redirect(reverse_lazy("league-info", args=(league.pk,)))
 
 
@@ -299,6 +316,7 @@ class LeagueCreateView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy("league-create")
 
     def form_valid(self, form):
+        
         self.object = form.save()
         messages.success(self.request, message=self.object.name, extra_tags=self.object.pk)
         
@@ -347,6 +365,7 @@ class SeasonCreateView(LoginRequiredMixin, CreateView):
     template_name = "season_create.html"
 
     def get_success_url(self):
+    
         return reverse_lazy("season-table", args=(self.object.pk,))
     
     def get_form(self, *args, **kwargs):
@@ -354,20 +373,25 @@ class SeasonCreateView(LoginRequiredMixin, CreateView):
         form = super().get_form(*args, **kwargs)
         self.form_visible = True
         self.league = get_object_or_404(League, pk=self.kwargs["pk"])
+        
         if self.league.seasons.filter(is_active=True):
             form.errors.update({NON_FIELD_ERRORS: ("Poprzedni sezon nie został jeszcze zakończony",)})
-            self.form_visible = False
+            self.form_visible = False 
         else:
             teams_free = []
+            
             for team in Team.objects.filter(country=self.league.country):
                 if not team.seasons.filter(is_active=True):
                     teams_free.append(team.pk)
+            
             teams = Team.objects.filter(pk__in=teams_free)
             form.fields["league"].initial = self.league
             form.fields["season_teams"].queryset = teams
+            
             if teams.count() < 10:
                 form.errors.update({NON_FIELD_ERRORS: ("Za mało drużyn w kraju do stworzenia ligi, min. 10",)})
                 self.form_visible = False
+        
         return form
 
     def get_context_data(self, *args, **kwargs):
@@ -384,17 +408,22 @@ class SeasonCreateView(LoginRequiredMixin, CreateView):
         number_of_teams = form.cleaned_data['number_of_teams']
         date_start = form.cleaned_data["date_start"]
         season_exists = self.league.seasons.first()
+        
         if number_of_teams != season_teams.count():
             form.add_error(NON_FIELD_ERRORS, f"Wybierz odpowiednią liczbę drużyn - {number_of_teams}")
+        
         if season_exists and season_exists.date_start.year >= date_start.year:
             form.add_error("date_start", f"Ostatni sezon to {season_exists.season_years}, stwórz kolejny")
-        if form.errors:
-            return self.form_invalid(form)
+        
         self.object = form.save()
+        
         try:
             create_season(season=self.object)
         except ValidationError as e:
             form.add_error(NON_FIELD_ERRORS, e)
+        
+        if form.errors:
+            
             return self.form_invalid(form)
         
         return super().form_valid(form)
@@ -408,11 +437,14 @@ class SeasonDeleteView(LoginRequiredMixin, DeleteView):
     template_name = "season_delete.html"
     
     def get_success_url(self):
+        
         return reverse_lazy("league-info", args=(self.object.league.pk,))
 
     def form_valid(self, form):
+        
         if self.object.is_active == True:
             form.add_error(NON_FIELD_ERRORS, "W trakcie trwającego sezonu nie można go usunąć")
+            
             return self.form_invalid(form)
             
         return super().form_valid(form)
@@ -450,6 +482,7 @@ class SeasonMatchView(ListView):
     context_object_name = "match_list"
 
     def get_queryset(self, *args, **kwargs):
+        
         self.season = get_object_or_404(Season, pk=self.kwargs['pk'])
         self.paginate_by = self.season.number_of_teams/2
         match_list = self.season.games.all()

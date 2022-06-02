@@ -20,7 +20,6 @@ class LoginForm(forms.Form):
         
         email = self.cleaned_data['email']
         password = self.cleaned_data['password']
-        
         user = User.objects.filter(email=email).first()
 
         if not user:
